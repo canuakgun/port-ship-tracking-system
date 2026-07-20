@@ -2,7 +2,7 @@ namespace PortShipTrackingSystem.Core.Entities{
 
     public class Ship
     {
-        public int shipId { get; set;}
+        public int ShipId { get; set;}
         public required string name{ get; set;}
         public required string IMO{ get; set;}
         public required string Type{ get; set;}
