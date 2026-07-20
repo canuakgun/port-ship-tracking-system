@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="PortShipTrackingSystem.Api/PortShipTrackingSystem.Api.csproj" />
+  <Project Path="PortShipTrackingSystem.Core/PortShipTrackingSystem.Core.csproj" />
+  <Project Path="PortShipTrackingSystem.Infrastructure/PortShipTrackingSystem.Infrastructure.csproj" />
+  <Project Path="PortShipTrackingSystem.Services/PortShipTrackingSystem.Services.csproj" />
+  <Project Path="PortShipTrackingSystem.Tests/PortShipTrackingSystem.Tests.csproj" />
+</Solution>

@@ -1,0 +1,12 @@
+C:\Users\Can\Desktop\port-ship-tracking-system\PortShipTrackingSystem.Core\bin\Debug\net10.0\PortShipTrackingSystem.Core.deps.json
+C:\Users\Can\Desktop\port-ship-tracking-system\PortShipTrackingSystem.Core\bin\Debug\net10.0\PortShipTrackingSystem.Core.dll
+C:\Users\Can\Desktop\port-ship-tracking-system\PortShipTrackingSystem.Core\bin\Debug\net10.0\PortShipTrackingSystem.Core.pdb
+C:\Users\Can\Desktop\port-ship-tracking-system\PortShipTrackingSystem.Core\obj\Debug\net10.0\PortShipTrackingSystem.Core.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Can\Desktop\port-ship-tracking-system\PortShipTrackingSystem.Core\obj\Debug\net10.0\PortShipTrackingSystem.Core.AssemblyInfoInputs.cache
+C:\Users\Can\Desktop\port-ship-tracking-system\PortShipTrackingSystem.Core\obj\Debug\net10.0\PortShipTrackingSystem.Core.AssemblyInfo.cs
+C:\Users\Can\Desktop\port-ship-tracking-system\PortShipTrackingSystem.Core\obj\Debug\net10.0\PortShipTrackingSystem.Core.csproj.CoreCompileInputs.cache
+C:\Users\Can\Desktop\port-ship-tracking-system\PortShipTrackingSystem.Core\obj\Debug\net10.0\PortShipTrackingSystem.Core.sourcelink.json
+C:\Users\Can\Desktop\port-ship-tracking-system\PortShipTrackingSystem.Core\obj\Debug\net10.0\PortShipTrackingSystem.Core.dll
+C:\Users\Can\Desktop\port-ship-tracking-system\PortShipTrackingSystem.Core\obj\Debug\net10.0\refint\PortShipTrackingSystem.Core.dll
+C:\Users\Can\Desktop\port-ship-tracking-system\PortShipTrackingSystem.Core\obj\Debug\net10.0\PortShipTrackingSystem.Core.pdb
+C:\Users\Can\Desktop\port-ship-tracking-system\PortShipTrackingSystem.Core\obj\Debug\net10.0\ref\PortShipTrackingSystem.Core.dll
