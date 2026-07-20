@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using PortShipTrackingSystem.Infrastructure.Data;
+using PortShipTrackingSystem.Core.Interfaces;
+using PortShipTrackingSystem.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +10,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
 
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<IShipRepository, ShipRepository>();
+builder.Services.AddScoped<IPortRepository, PortRepository>();
+builder.Services.AddScoped<IShipVisitRepository, ShipVisitRepository>();
+builder.Services.AddScoped<ICargoRepository, CargoRepository>();
+builder.Services.AddScoped<ICrewMemberRepository, CrewMemberRepository>();
+builder.Services.AddScoped<IShipCrewAssignmentRepository, ShipCrewAssignmentRepository>();
 
 var app = builder.Build();
 
