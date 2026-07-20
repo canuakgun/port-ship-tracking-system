@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PortShipTrackingSystem.Tests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+dfde1a301cf4b5fb8d559ca1b857d1ac242cd14b")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f9bef85d5317a9f4d187e831ea9bf3e640b61010")]
 [assembly: System.Reflection.AssemblyProductAttribute("PortShipTrackingSystem.Tests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PortShipTrackingSystem.Tests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
