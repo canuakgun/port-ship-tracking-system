@@ -23,4 +23,16 @@ public class ShipVisitRepository : GenericRepository<ShipVisit>, IShipVisitRepos
     {
         return await _context.ShipVisits.Where(v => v.PortId == portId).ToListAsync();
     }
+    public async Task<IEnumerable<ShipVisit>> GetAllWithDetailsAsync()
+{
+    return await _context.ShipVisits
+        .Include(v => v.Ship)
+        .Include(v => v.Port)
+        .ToListAsync();
+}
+
+public async Task<ShipVisit?> GetByIdWithDetailsAsync(int id)
+    {
+        return await _context.ShipVisits.Include(v => v.Ship).Include(v => v.Port).FirstOrDefaultAsync(v => v.VisitId == id);
+    }
 }

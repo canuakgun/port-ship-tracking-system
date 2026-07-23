@@ -20,6 +20,7 @@ builder.Services.AddScoped<ICrewMemberRepository, CrewMemberRepository>();
 builder.Services.AddScoped<IShipCrewAssignmentRepository, ShipCrewAssignmentRepository>();
 builder.Services.AddScoped<IShipService, ShipService>();
 builder.Services.AddScoped<IPortService, PortService>();
+builder.Services.AddScoped<IShipVisitService, ShipVisitService>();
 
 var app = builder.Build();
 
