@@ -16,6 +16,12 @@ public class CargoRepository : GenericRepository<Cargo>, ICargoRepository
 
     public async Task<IEnumerable<Cargo>> GetCargoesByShipIdAsync(int shipId)
     {
-        return await _context.Cargoes.Where(c => c.ShipId == shipId).ToListAsync();
+        return await _context.Cargoes.Include(c => c.Ship).Where(c => c.ShipId == shipId).ToListAsync();
+    }
+    public async Task<Cargo?> GetByIdWithDetailsAsync(int id)
+    {
+        return await _context.Cargoes
+            .Include(c => c.Ship)
+            .FirstOrDefaultAsync(c => c.CargoId == id);
     }
 }
