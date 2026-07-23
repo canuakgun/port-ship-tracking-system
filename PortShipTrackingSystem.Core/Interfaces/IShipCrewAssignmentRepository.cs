@@ -6,4 +6,6 @@ public interface IShipCrewAssignmentRepository : IGenericRepository<ShipCrewAssi
 {
     Task<bool> AssignmentExistsAsync(int shipId, int crewId, DateTime date);
     Task<IEnumerable<ShipCrewAssignment>> GetAssignmentsByShipIdAsync(int shipId);
+    Task<IEnumerable<ShipCrewAssignment>> GetAllWithDetailsAsync();
+    Task<ShipCrewAssignment?> GetByIdWithDetailsAsync(int id);
 }

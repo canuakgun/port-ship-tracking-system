@@ -24,4 +24,13 @@ public class ShipCrewAssignmentRepository : GenericRepository<ShipCrewAssignment
     {
         return await _context.ShipCrewAssignments.Where(sca => sca.ShipId == shipId).ToListAsync();
     }
+    public async Task<IEnumerable<ShipCrewAssignment>> GetAllWithDetailsAsync()
+    {
+        return await _context.ShipCrewAssignments.Include(a => a.Ship).Include(a => a.Crew).ToListAsync();
+    }
+
+    public async Task<ShipCrewAssignment?> GetByIdWithDetailsAsync(int id)
+    {
+        return await _context.ShipCrewAssignments.Include(a => a.Ship).Include(a => a.Crew).FirstOrDefaultAsync(a => a.AssignmentId == id);
+    }
 }

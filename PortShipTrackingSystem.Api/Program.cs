@@ -23,6 +23,7 @@ builder.Services.AddScoped<IPortService, PortService>();
 builder.Services.AddScoped<IShipVisitService, ShipVisitService>();
 builder.Services.AddScoped<ICargoService, CargoService>();
 builder.Services.AddScoped<ICrewMemberService, CrewMemberService>();
+builder.Services.AddScoped<IShipCrewAssignmentService, ShipCrewAssignmentService>();
 
 var app = builder.Build();
 

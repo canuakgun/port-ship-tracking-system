@@ -20,6 +20,7 @@ public class CargoService : ICargoService
         return cargoes.Select(c => new CargoReadDto
         {
             CargoId = c.CargoId,
+            ShipId = c.ShipId,
             Description = c.Description,
             WeightTon = c.WeightTon,
             CargoType = c.CargoType,
@@ -37,6 +38,7 @@ public class CargoService : ICargoService
         return new CargoReadDto
         {
             CargoId = cargo.CargoId,
+            ShipId = cargo.ShipId,
             Description = cargo.Description,
             WeightTon = cargo.WeightTon,
             CargoType = cargo.CargoType,
@@ -65,6 +67,7 @@ public class CargoService : ICargoService
         return new CargoReadDto
         {
             CargoId = createdCargo!.CargoId,
+            ShipId = createdCargo.ShipId,
             Description = createdCargo.Description,
             WeightTon = createdCargo.WeightTon,
             CargoType = createdCargo.CargoType,
