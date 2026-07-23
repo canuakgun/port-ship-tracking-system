@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using PortShipTrackingSystem.Infrastructure.Data;
 using PortShipTrackingSystem.Core.Interfaces;
 using PortShipTrackingSystem.Infrastructure.Repositories;
+using PortShipTrackingSystem.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +18,7 @@ builder.Services.AddScoped<IShipVisitRepository, ShipVisitRepository>();
 builder.Services.AddScoped<ICargoRepository, CargoRepository>();
 builder.Services.AddScoped<ICrewMemberRepository, CrewMemberRepository>();
 builder.Services.AddScoped<IShipCrewAssignmentRepository, ShipCrewAssignmentRepository>();
+builder.Services.AddScoped<IShipService, ShipService>();
 
 var app = builder.Build();
 
