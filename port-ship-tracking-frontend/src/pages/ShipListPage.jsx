@@ -73,6 +73,7 @@ function ShipListPage() {
       <table>
         <thead>
           <tr>
+            <th>ID</th>
             <th>Name</th>
             <th>IMO</th>
             <th>Type</th>
@@ -84,6 +85,7 @@ function ShipListPage() {
         <tbody>
           {ships.map((ship) => (
             <tr key={ship.shipId}>
+              <td>{ship.shipId}</td>
               <td>{ship.name}</td>
               <td>{ship.imo}</td>
               <td>{ship.type}</td>
