@@ -1,8 +1,13 @@
 import { useEffect, useState } from "react";
 import { getVisits, createVisit, deleteVisit } from "../api/shipVisitApi";
+import { getShips } from "../api/shipApi";
+import { getPorts } from "../api/portApi";
+import SearchableSelect from "../components/SearchableSelect";
 
 function ShipVisitListPage() {
   const [visits, setVisits] = useState([]);
+  const [ships, setShips] = useState([]);
+  const [ports, setPorts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({
     shipId: "",
@@ -26,7 +31,12 @@ function ShipVisitListPage() {
 
   useEffect(() => {
     fetchVisits();
+    getShips().then((res) => setShips(res.data));
+    getPorts().then((res) => setPorts(res.data));
   }, []);
+
+  const shipOptions = ships.map((s) => ({ id: s.shipId, label: s.name }));
+  const portOptions = ports.map((p) => ({ id: p.portId, label: p.name }));
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -66,8 +76,18 @@ function ShipVisitListPage() {
       <h1>Ship Visits</h1>
 
       <form onSubmit={handleSubmit}>
-        <input name="shipId" type="number" placeholder="Ship ID" value={formData.shipId} onChange={handleChange} required />
-        <input name="portId" type="number" placeholder="Port ID" value={formData.portId} onChange={handleChange} required />
+        <SearchableSelect
+          options={shipOptions}
+          value={formData.shipId}
+          onChange={(id) => setFormData({ ...formData, shipId: id })}
+          placeholder="Search Ship..."
+        />
+        <SearchableSelect
+          options={portOptions}
+          value={formData.portId}
+          onChange={(id) => setFormData({ ...formData, portId: id })}
+          placeholder="Search Port..."
+        />
         <input name="arrivalDate" type="date" value={formData.arrivalDate} onChange={handleChange} required />
         <input name="departureDate" type="date" value={formData.departureDate} onChange={handleChange} required />
         <input name="purpose" placeholder="Purpose" value={formData.purpose} onChange={handleChange} required />
