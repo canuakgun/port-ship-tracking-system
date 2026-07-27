@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getShips, createShip, updateShip, deleteShip } from "../api/shipApi";
+import { Link } from "react-router-dom";
 
 function ShipListPage() {
   const [ships, setShips] = useState([]);
@@ -130,6 +131,9 @@ function ShipListPage() {
               <td>
                 <button onClick={() => handleEditClick(ship)}>Edit</button>
                 <button onClick={() => handleDelete(ship.shipId)}>Delete</button>
+                 <Link to={`/cargoes/ship/${ship.shipId}`}>
+                  <button type="button">View Cargoes</button>
+                </Link>
               </td>
             </tr>
           ))}

@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import ShipListPage from "../pages/ShipListPage";
 import PortListPage from "../pages/PortListPage";
 import ShipVisitListPage from "../pages/ShipVisitListPage";
@@ -9,6 +9,7 @@ import CargoListPage from "../pages/CargoListPage";
 function AppRoutes() {
   return (
     <Routes>
+      <Route path="/" element={<Navigate to="/ships" replace />} />
       <Route path="/ships" element={<ShipListPage />} />
       <Route path="/ports" element={<PortListPage />} />
       <Route path="/visits" element={<ShipVisitListPage />} />
