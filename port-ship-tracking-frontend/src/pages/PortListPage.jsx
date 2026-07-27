@@ -69,7 +69,7 @@ function PortListPage() {
     <div>
       <h1>Ports</h1>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className={editingId ? "editing" : ""}>
         <input name="name" placeholder="Name" value={formData.name} onChange={handleChange} required />
         <input name="country" placeholder="Country" value={formData.country} onChange={handleChange} required />
         <input name="city" placeholder="City" value={formData.city} onChange={handleChange} required />

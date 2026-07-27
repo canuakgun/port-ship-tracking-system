@@ -80,7 +80,7 @@ function CargoListPage() {
     <div>
       <h1>Cargoes for Ship #{shipId}</h1>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className={editingId ? "editing" : ""}>
         <input name="description" placeholder="Description" value={formData.description} onChange={handleChange} required />
         <input name="weightTon" type="number" step="0.01" placeholder="Weight (Ton)" value={formData.weightTon} onChange={handleChange} required />
         <input name="cargoType" placeholder="Cargo Type" value={formData.cargoType} onChange={handleChange} required />

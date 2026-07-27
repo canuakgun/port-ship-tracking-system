@@ -83,7 +83,7 @@ function ShipListPage() {
     <div>
       <h1>Ships</h1>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className={editingId ? "editing" : ""}>
         <input name="name" placeholder="Name" value={formData.name} onChange={handleChange} required />
         <input
           name="imo"

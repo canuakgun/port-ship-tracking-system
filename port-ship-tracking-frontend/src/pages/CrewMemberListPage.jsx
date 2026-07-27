@@ -81,7 +81,7 @@ function CrewMemberListPage() {
     <div>
       <h1>Crew Members</h1>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className={editingId ? "editing" : ""}>
         <input name="firstName" placeholder="First Name" value={formData.firstName} onChange={handleChange} required />
         <input name="lastName" placeholder="Last Name" value={formData.lastName} onChange={handleChange} required />
         <input name="email" type="email" placeholder="Email" value={formData.email} onChange={handleChange} required />

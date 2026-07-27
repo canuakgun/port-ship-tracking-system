@@ -98,7 +98,7 @@ function ShipVisitListPage() {
     <div>
       <h1>Ship Visits</h1>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className={editingId ? "editing" : ""}>
         <SearchableSelect
           options={shipOptions}
           value={formData.shipId}

@@ -1,13 +1,8 @@
 import { useEffect, useState } from "react";
 import { getAssignments, createAssignment, deleteAssignment } from "../api/assignmentApi";
-import { getShips } from "../api/shipApi";
-import { getCrewMembers } from "../api/crewApi";
-import SearchableSelect from "../components/SearchableSelect";
 
 function ShipCrewAssignmentListPage() {
   const [assignments, setAssignments] = useState([]);
-  const [ships, setShips] = useState([]);
-  const [crewMembers, setCrewMembers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({ shipId: "", crewId: "", assignmentDate: "" });
 
@@ -25,12 +20,7 @@ function ShipCrewAssignmentListPage() {
 
   useEffect(() => {
     fetchAssignments();
-    getShips().then((res) => setShips(res.data));
-    getCrewMembers().then((res) => setCrewMembers(res.data));
   }, []);
-
-  const shipOptions = ships.map((s) => ({ id: s.shipId, label: s.name }));
-  const crewOptions = crewMembers.map((c) => ({ id: c.crewId, label: `${c.firstName} ${c.lastName}` }));
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -70,18 +60,8 @@ function ShipCrewAssignmentListPage() {
       <h1>Ship Crew Assignments</h1>
 
       <form onSubmit={handleSubmit}>
-        <SearchableSelect
-          options={shipOptions}
-          value={formData.shipId}
-          onChange={(id) => setFormData({ ...formData, shipId: id })}
-          placeholder="Search Ship..."
-        />
-        <SearchableSelect
-          options={crewOptions}
-          value={formData.crewId}
-          onChange={(id) => setFormData({ ...formData, crewId: id })}
-          placeholder="Search Crew Member..."
-        />
+        <input name="shipId" type="number" placeholder="Ship ID" value={formData.shipId} onChange={handleChange} required />
+        <input name="crewId" type="number" placeholder="Crew ID" value={formData.crewId} onChange={handleChange} required />
         <input name="assignmentDate" type="date" value={formData.assignmentDate} onChange={handleChange} required />
         <button type="submit">Add Assignment</button>
       </form>
