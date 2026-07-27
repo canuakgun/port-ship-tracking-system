@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { getPorts, createPort, deletePort } from "../api/portApi";
+import { getPorts, createPort, updatePort, deletePort } from "../api/portApi";
 
 function PortListPage() {
   const [ports, setPorts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({ name: "", country: "", city: "" });
 
   const fetchPorts = () => {
@@ -28,15 +29,28 @@ function PortListPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    createPort(formData)
+    const request = editingId ? updatePort(editingId, formData) : createPort(formData);
+
+    request
       .then(() => {
         setFormData({ name: "", country: "", city: "" });
+        setEditingId(null);
         fetchPorts();
       })
       .catch((error) => {
-        console.error("Error creating port:", error);
-        alert("Failed to create port.");
+        console.error("Error saving port:", error);
+        alert("Failed to save port.");
       });
+  };
+
+  const handleEditClick = (port) => {
+    setFormData({ name: port.name, country: port.country, city: port.city });
+    setEditingId(port.portId);
+  };
+
+  const handleCancelEdit = () => {
+    setFormData({ name: "", country: "", city: "" });
+    setEditingId(null);
   };
 
   const handleDelete = (id) => {
@@ -59,7 +73,8 @@ function PortListPage() {
         <input name="name" placeholder="Name" value={formData.name} onChange={handleChange} required />
         <input name="country" placeholder="Country" value={formData.country} onChange={handleChange} required />
         <input name="city" placeholder="City" value={formData.city} onChange={handleChange} required />
-        <button type="submit">Add Port</button>
+        <button type="submit">{editingId ? "Update Port" : "Add Port"}</button>
+        {editingId && <button type="button" onClick={handleCancelEdit}>Cancel</button>}
       </form>
 
       <table>
@@ -80,6 +95,7 @@ function PortListPage() {
               <td>{port.country}</td>
               <td>{port.city}</td>
               <td>
+                <button onClick={() => handleEditClick(port)}>Edit</button>
                 <button onClick={() => handleDelete(port.portId)}>Delete</button>
               </td>
             </tr>

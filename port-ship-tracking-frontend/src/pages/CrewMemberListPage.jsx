@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { getCrewMembers, createCrewMember, deleteCrewMember } from "../api/crewApi";
+import { getCrewMembers, createCrewMember, updateCrewMember, deleteCrewMember } from "../api/crewApi";
 
 function CrewMemberListPage() {
   const [crewMembers, setCrewMembers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -34,15 +35,34 @@ function CrewMemberListPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    createCrewMember(formData)
+    const request = editingId ? updateCrewMember(editingId, formData) : createCrewMember(formData);
+
+    request
       .then(() => {
         setFormData({ firstName: "", lastName: "", email: "", phoneNumber: "", role: "" });
+        setEditingId(null);
         fetchCrewMembers();
       })
       .catch((error) => {
-        console.error("Error creating crew member:", error);
-        alert("Failed to create crew member. Email might already be in use.");
+        console.error("Error saving crew member:", error);
+        alert("Failed to save crew member. Email might already be in use.");
       });
+  };
+
+  const handleEditClick = (crew) => {
+    setFormData({
+      firstName: crew.firstName,
+      lastName: crew.lastName,
+      email: crew.email,
+      phoneNumber: crew.phoneNumber,
+      role: crew.role,
+    });
+    setEditingId(crew.crewId);
+  };
+
+  const handleCancelEdit = () => {
+    setFormData({ firstName: "", lastName: "", email: "", phoneNumber: "", role: "" });
+    setEditingId(null);
   };
 
   const handleDelete = (id) => {
@@ -67,13 +87,14 @@ function CrewMemberListPage() {
         <input name="email" type="email" placeholder="Email" value={formData.email} onChange={handleChange} required />
         <input name="phoneNumber" placeholder="Phone Number" value={formData.phoneNumber} onChange={handleChange} required />
         <input name="role" placeholder="Role" value={formData.role} onChange={handleChange} required />
-        <button type="submit">Add Crew Member</button>
+        <button type="submit">{editingId ? "Update Crew Member" : "Add Crew Member"}</button>
+        {editingId && <button type="button" onClick={handleCancelEdit}>Cancel</button>}
       </form>
 
       <table>
         <thead>
           <tr>
-            <td>ID</td>
+            <th>ID</th>
             <th>First Name</th>
             <th>Last Name</th>
             <th>Email</th>
@@ -92,6 +113,7 @@ function CrewMemberListPage() {
               <td>{crew.phoneNumber}</td>
               <td>{crew.role}</td>
               <td>
+                <button onClick={() => handleEditClick(crew)}>Edit</button>
                 <button onClick={() => handleDelete(crew.crewId)}>Delete</button>
               </td>
             </tr>

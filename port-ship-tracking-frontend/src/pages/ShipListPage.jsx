@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { getShips, createShip, deleteShip } from "../api/shipApi";
+import { getShips, createShip, updateShip, deleteShip } from "../api/shipApi";
 
 function ShipListPage() {
   const [ships, setShips] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
     imo: "",
@@ -34,15 +35,36 @@ function ShipListPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    createShip({ ...formData, yearBuilt: Number(formData.yearBuilt) })
+    const dto = { ...formData, yearBuilt: Number(formData.yearBuilt) };
+
+    const request = editingId ? updateShip(editingId, dto) : createShip(dto);
+
+    request
       .then(() => {
         setFormData({ name: "", imo: "", type: "", flag: "", yearBuilt: "" });
+        setEditingId(null);
         fetchShips();
       })
       .catch((error) => {
-        console.error("Error creating ship:", error);
-        alert("Failed to create ship. Check console for details.");
+        console.error("Error saving ship:", error);
+        alert("Failed to save ship. Check console for details.");
       });
+  };
+
+  const handleEditClick = (ship) => {
+    setFormData({
+      name: ship.name,
+      imo: ship.imo,
+      type: ship.type,
+      flag: ship.flag,
+      yearBuilt: ship.yearBuilt,
+    });
+    setEditingId(ship.shipId);
+  };
+
+  const handleCancelEdit = () => {
+    setFormData({ name: "", imo: "", type: "", flag: "", yearBuilt: "" });
+    setEditingId(null);
   };
 
   const handleDelete = (id) => {
@@ -63,11 +85,25 @@ function ShipListPage() {
 
       <form onSubmit={handleSubmit}>
         <input name="name" placeholder="Name" value={formData.name} onChange={handleChange} required />
-        <input name="imo" placeholder="IMO (7 digits)" value={formData.imo} onChange={handleChange} maxLength={7} pattern="\d{7}" title="IMO must be exactly 7 digits" required />
+        <input
+          name="imo"
+          placeholder="IMO (7 digits)"
+          value={formData.imo}
+          onChange={handleChange}
+          maxLength={7}
+          pattern="\d{7}"
+          title="IMO must be exactly 7 digits"
+          required
+        />
         <input name="type" placeholder="Type" value={formData.type} onChange={handleChange} required />
         <input name="flag" placeholder="Flag" value={formData.flag} onChange={handleChange} required />
         <input name="yearBuilt" type="number" placeholder="Year Built" value={formData.yearBuilt} onChange={handleChange} required />
-        <button type="submit">Add Ship</button>
+        <button type="submit">{editingId ? "Update Ship" : "Add Ship"}</button>
+        {editingId && (
+          <button type="button" onClick={handleCancelEdit}>
+            Cancel
+          </button>
+        )}
       </form>
 
       <table>
@@ -92,6 +128,7 @@ function ShipListPage() {
               <td>{ship.flag}</td>
               <td>{ship.yearBuilt}</td>
               <td>
+                <button onClick={() => handleEditClick(ship)}>Edit</button>
                 <button onClick={() => handleDelete(ship.shipId)}>Delete</button>
               </td>
             </tr>
