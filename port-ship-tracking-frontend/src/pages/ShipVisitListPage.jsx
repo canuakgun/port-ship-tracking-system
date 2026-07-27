@@ -120,9 +120,18 @@ function ShipVisitListPage() {
           onChange={(id) => setFormData({ ...formData, portId: id })}
           placeholder="Search Port..."
         />
-        <input name="arrivalDate" type="date" value={formData.arrivalDate} onChange={handleChange} required />
-        <input name="departureDate" type="date" value={formData.departureDate} onChange={handleChange} required />
-        <input name="purpose" placeholder="Purpose" value={formData.purpose} onChange={handleChange} required />
+        <input name="arrivalDate" type="date" value={formData.arrivalDate} onChange={handleChange}
+          onInvalid={(e) => e.target.setCustomValidity("Please select the arrival date.")}
+          onInput={(e) => e.target.setCustomValidity("")}
+          required />
+        <input name="departureDate" type="date" value={formData.departureDate} onChange={handleChange}
+          onInvalid={(e) => e.target.setCustomValidity("Please select the departure date.")}
+          onInput={(e) => e.target.setCustomValidity("")}
+          required />
+        <input name="purpose" placeholder="Purpose" value={formData.purpose} onChange={handleChange}
+          onInvalid={(e) => e.target.setCustomValidity("Please enter the purpose of the visit.")}
+          onInput={(e) => e.target.setCustomValidity("")}
+          required />
         <button type="submit">{editingId ? "Update Visit" : "Add Visit"}</button>
         {editingId && <button type="button" onClick={handleCancelEdit}>Cancel</button>}
       </form>

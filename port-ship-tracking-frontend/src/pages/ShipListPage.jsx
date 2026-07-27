@@ -94,21 +94,56 @@ function ShipListPage() {
       <ErrorMessage message={error} onDismiss={() => setError(null)} />
 
       <form onSubmit={handleSubmit} className={editingId ? "editing" : ""}>
-        <input name="name" placeholder="Name" value={formData.name} onChange={handleChange} required />
         <input
-          name="imo"
-          placeholder="IMO (7 digits)"
-          value={formData.imo}
-          onChange={handleChange}
-          maxLength={7}
-          pattern="\d{7}"
-          title="IMO must be exactly 7 digits"
-          required
-        />
-        <input name="type" placeholder="Type" value={formData.type} onChange={handleChange} required />
-        <input name="flag" placeholder="Flag" value={formData.flag} onChange={handleChange} required />
-        <input name="yearBuilt" type="number" placeholder="Year Built" value={formData.yearBuilt} onChange={handleChange} required />
-        <button type="submit">{editingId ? "Update Ship" : "Add Ship"}</button>
+        name="name"
+        placeholder="Name"
+        value={formData.name}
+        onChange={handleChange}
+        onInvalid={(e) => e.target.setCustomValidity("Please enter the ship's name.")}
+        onInput={(e) => e.target.setCustomValidity("")}
+        required
+      />
+      <input
+        name="imo"
+        placeholder="IMO (7 digits)"
+        value={formData.imo}
+        onChange={handleChange}
+        maxLength={7}
+        pattern="\d{7}"
+        title="IMO must be exactly 7 digits"
+        onInvalid={(e) => e.target.setCustomValidity("IMO must be exactly 7 digits.")}
+        onInput={(e) => e.target.setCustomValidity("")}
+        required
+      />
+      <input
+        name="type"
+        placeholder="Type"
+        value={formData.type}
+        onChange={handleChange}
+        onInvalid={(e) => e.target.setCustomValidity("Please enter the ship type.")}
+        onInput={(e) => e.target.setCustomValidity("")}
+        required
+      />
+      <input
+        name="flag"
+        placeholder="Flag"
+        value={formData.flag}
+        onChange={handleChange}
+        onInvalid={(e) => e.target.setCustomValidity("Please enter the ship's flag country.")}
+        onInput={(e) => e.target.setCustomValidity("")}
+        required
+      />
+      <input
+        name="yearBuilt"
+        type="number"
+        placeholder="Year Built"
+        value={formData.yearBuilt}
+        onChange={handleChange}
+        onInvalid={(e) => e.target.setCustomValidity("Please enter the year the ship was built.")}
+        onInput={(e) => e.target.setCustomValidity("")}
+        required
+      />
+      <button type="submit">{editingId ? "Update Ship" : "Add Ship"}</button>
         {editingId && (
           <button type="button" onClick={handleCancelEdit}>
             Cancel

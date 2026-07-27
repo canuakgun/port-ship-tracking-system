@@ -91,7 +91,10 @@ function ShipCrewAssignmentListPage() {
           onChange={(id) => setFormData({ ...formData, crewId: id })}
           placeholder="Search Crew Member..."
         />
-        <input name="assignmentDate" type="date" value={formData.assignmentDate} onChange={handleChange} required />
+        <input name="assignmentDate" type="date" value={formData.assignmentDate} onChange={handleChange}
+          onInvalid={(e) => e.target.setCustomValidity("Please select the assignment date.")}
+          onInput={(e) => e.target.setCustomValidity("")}
+          required />
         <button type="submit">Add Assignment</button>
       </form>
 

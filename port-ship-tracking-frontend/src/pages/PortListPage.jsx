@@ -78,13 +78,37 @@ function PortListPage() {
 
       <ErrorMessage message={error} onDismiss={() => setError(null)} />
 
-      <form onSubmit={handleSubmit} className={editingId ? "editing" : ""}>
-        <input name="name" placeholder="Name" value={formData.name} onChange={handleChange} required />
-        <input name="country" placeholder="Country" value={formData.country} onChange={handleChange} required />
-        <input name="city" placeholder="City" value={formData.city} onChange={handleChange} required />
-        <button type="submit">{editingId ? "Update Port" : "Add Port"}</button>
-        {editingId && <button type="button" onClick={handleCancelEdit}>Cancel</button>}
-      </form>
+        <form onSubmit={handleSubmit} className={editingId ? "editing" : ""}>
+    <input
+      name="name"
+      placeholder="Name"
+      value={formData.name}
+      onChange={handleChange}
+      onInvalid={(e) => e.target.setCustomValidity("Please enter the port's name.")}
+      onInput={(e) => e.target.setCustomValidity("")}
+      required
+    />
+    <input
+      name="country"
+      placeholder="Country"
+      value={formData.country}
+      onChange={handleChange}
+      onInvalid={(e) => e.target.setCustomValidity("Please enter the country.")}
+      onInput={(e) => e.target.setCustomValidity("")}
+      required
+    />
+    <input
+      name="city"
+      placeholder="City"
+      value={formData.city}
+      onChange={handleChange}
+      onInvalid={(e) => e.target.setCustomValidity("Please enter the city.")}
+      onInput={(e) => e.target.setCustomValidity("")}
+      required
+    />
+    <button type="submit">{editingId ? "Update Port" : "Add Port"}</button>
+    {editingId && <button type="button" onClick={handleCancelEdit}>Cancel</button>}
+  </form>
 
       <table>
         <thead>
