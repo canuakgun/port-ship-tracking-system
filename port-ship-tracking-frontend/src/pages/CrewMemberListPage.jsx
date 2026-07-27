@@ -91,15 +91,30 @@ function CrewMemberListPage() {
       <ErrorMessage message={error} onDismiss={() => setError(null)} />
 
       <form onSubmit={handleSubmit} className={editingId ? "editing" : ""}>
-        <input name="firstName" placeholder="First Name" value={formData.firstName} onChange={handleChange}
+        <input
+          name="firstName"
+          placeholder="First Name"
+          value={formData.firstName}
+          onChange={handleChange}
           onInvalid={(e) => e.target.setCustomValidity("Please enter the first name.")}
           onInput={(e) => e.target.setCustomValidity("")}
-          required />
-        <input name="lastName" placeholder="Last Name" value={formData.lastName} onChange={handleChange}
+          required
+        />
+        <input
+          name="lastName"
+          placeholder="Last Name"
+          value={formData.lastName}
+          onChange={handleChange}
           onInvalid={(e) => e.target.setCustomValidity("Please enter the last name.")}
           onInput={(e) => e.target.setCustomValidity("")}
-          required />
-        <input name="email" type="email" placeholder="Email" value={formData.email} onChange={handleChange}
+          required
+        />
+        <input
+          name="email"
+          type="email"
+          placeholder="Email"
+          value={formData.email}
+          onChange={handleChange}
           onInvalid={(e) => {
             if (e.target.validity.typeMismatch) {
               e.target.setCustomValidity("Please enter a valid email address.");
@@ -108,17 +123,32 @@ function CrewMemberListPage() {
             }
           }}
           onInput={(e) => e.target.setCustomValidity("")}
-          required />
-        <input name="phoneNumber" placeholder="Phone Number" value={formData.phoneNumber} onChange={handleChange}
+          required
+        />
+        <input
+          name="phoneNumber"
+          placeholder="Phone Number"
+          value={formData.phoneNumber}
+          onChange={handleChange}
           onInvalid={(e) => e.target.setCustomValidity("Please enter a phone number.")}
           onInput={(e) => e.target.setCustomValidity("")}
-          required />
-        <input name="role" placeholder="Role" value={formData.role} onChange={handleChange}
+          required
+        />
+        <input
+          name="role"
+          placeholder="Role"
+          value={formData.role}
+          onChange={handleChange}
           onInvalid={(e) => e.target.setCustomValidity("Please enter the crew member's role.")}
           onInput={(e) => e.target.setCustomValidity("")}
-          required />
+          required
+        />
         <button type="submit">{editingId ? "Update Crew Member" : "Add Crew Member"}</button>
-        {editingId && <button type="button" onClick={handleCancelEdit}>Cancel</button>}
+        {editingId && (
+          <button type="button" onClick={handleCancelEdit}>
+            Cancel
+          </button>
+        )}
       </form>
 
       <table>
