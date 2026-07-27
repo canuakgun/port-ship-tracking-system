@@ -3,12 +3,16 @@ import { getVisits, createVisit, updateVisit, deleteVisit } from "../api/shipVis
 import { getShips } from "../api/shipApi";
 import { getPorts } from "../api/portApi";
 import SearchableSelect from "../components/SearchableSelect";
+import LoadingSpinner from "../components/LoadingSpinner";
+import ErrorMessage from "../components/ErrorMessage";
+import { getErrorMessage } from "../utils/apiError";
 
 function ShipVisitListPage() {
   const [visits, setVisits] = useState([]);
   const [ships, setShips] = useState([]);
   const [ports, setPorts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({
     shipId: "",
@@ -26,6 +30,7 @@ function ShipVisitListPage() {
       })
       .catch((error) => {
         console.error("Error fetching visits:", error);
+        setError("Failed to load visits. Please try again.");
         setLoading(false);
       });
   };
@@ -47,6 +52,7 @@ function ShipVisitListPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setError(null);
     const dto = {
       ...formData,
       shipId: Number(formData.shipId),
@@ -62,7 +68,7 @@ function ShipVisitListPage() {
       })
       .catch((error) => {
         console.error("Error saving visit:", error);
-        alert("Failed to save visit. Check that arrival date is before departure date.");
+        setError(error.response?.data?.message || "Failed to save visit.");
       });
   };
 
@@ -84,19 +90,22 @@ function ShipVisitListPage() {
 
   const handleDelete = (id) => {
     if (!window.confirm("Are you sure you want to delete this visit?")) return;
+    setError(null);
     deleteVisit(id)
       .then(() => fetchVisits())
       .catch((error) => {
         console.error("Error deleting visit:", error);
-        alert("Failed to delete visit.");
+        setError(getErrorMessage(error, "Failed to delete list."));
       });
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <LoadingSpinner />;
 
   return (
     <div>
       <h1>Ship Visits</h1>
+
+      <ErrorMessage message={error} onDismiss={() => setError(null)} />
 
       <form onSubmit={handleSubmit} className={editingId ? "editing" : ""}>
         <SearchableSelect

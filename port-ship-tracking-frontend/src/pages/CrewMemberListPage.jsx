@@ -1,9 +1,13 @@
 import { useEffect, useState } from "react";
 import { getCrewMembers, createCrewMember, updateCrewMember, deleteCrewMember } from "../api/crewApi";
+import LoadingSpinner from "../components/LoadingSpinner";
+import ErrorMessage from "../components/ErrorMessage";
+import { getErrorMessage } from "../utils/apiError";
 
 function CrewMemberListPage() {
   const [crewMembers, setCrewMembers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({
     firstName: "",
@@ -21,6 +25,7 @@ function CrewMemberListPage() {
       })
       .catch((error) => {
         console.error("Error fetching crew members:", error);
+        setError("Failed to load crew members. Please try again.");
         setLoading(false);
       });
   };
@@ -35,6 +40,7 @@ function CrewMemberListPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setError(null);
     const request = editingId ? updateCrewMember(editingId, formData) : createCrewMember(formData);
 
     request
@@ -45,7 +51,7 @@ function CrewMemberListPage() {
       })
       .catch((error) => {
         console.error("Error saving crew member:", error);
-        alert("Failed to save crew member. Email might already be in use.");
+        setError(error.response?.data?.message || "Failed to save crew member.");
       });
   };
 
@@ -67,19 +73,22 @@ function CrewMemberListPage() {
 
   const handleDelete = (id) => {
     if (!window.confirm("Are you sure you want to delete this crew member?")) return;
+    setError(null);
     deleteCrewMember(id)
       .then(() => fetchCrewMembers())
       .catch((error) => {
         console.error("Error deleting crew member:", error);
-        alert("Failed to delete crew member.");
+        setError(error.response?.data?.message || "Failed to delete crew member.");
       });
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <LoadingSpinner />;
 
   return (
     <div>
       <h1>Crew Members</h1>
+
+      <ErrorMessage message={error} onDismiss={() => setError(null)} />
 
       <form onSubmit={handleSubmit} className={editingId ? "editing" : ""}>
         <input name="firstName" placeholder="First Name" value={formData.firstName} onChange={handleChange} required />

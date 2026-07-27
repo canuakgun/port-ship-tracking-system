@@ -1,9 +1,13 @@
 import { useEffect, useState } from "react";
 import { getPorts, createPort, updatePort, deletePort } from "../api/portApi";
+import LoadingSpinner from "../components/LoadingSpinner";
+import ErrorMessage from "../components/ErrorMessage";
+import { getErrorMessage } from "../utils/apiError";
 
 function PortListPage() {
   const [ports, setPorts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({ name: "", country: "", city: "" });
 
@@ -15,6 +19,7 @@ function PortListPage() {
       })
       .catch((error) => {
         console.error("Error fetching ports:", error);
+        setError("Failed to load ports. Please try again.");
         setLoading(false);
       });
   };
@@ -29,6 +34,7 @@ function PortListPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setError(null);
     const request = editingId ? updatePort(editingId, formData) : createPort(formData);
 
     request
@@ -39,7 +45,7 @@ function PortListPage() {
       })
       .catch((error) => {
         console.error("Error saving port:", error);
-        alert("Failed to save port.");
+        setError(getErrorMessage(error, "Failed to save port."));
       });
   };
 
@@ -55,19 +61,22 @@ function PortListPage() {
 
   const handleDelete = (id) => {
     if (!window.confirm("Are you sure you want to delete this port?")) return;
+    setError(null);
     deletePort(id)
       .then(() => fetchPorts())
       .catch((error) => {
         console.error("Error deleting port:", error);
-        alert("Failed to delete port.");
+        setError(getErrorMessage(error, "Failed to delete port."));
       });
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <LoadingSpinner />;
 
   return (
     <div>
       <h1>Ports</h1>
+
+      <ErrorMessage message={error} onDismiss={() => setError(null)} />
 
       <form onSubmit={handleSubmit} className={editingId ? "editing" : ""}>
         <input name="name" placeholder="Name" value={formData.name} onChange={handleChange} required />

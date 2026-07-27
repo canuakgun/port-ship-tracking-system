@@ -41,4 +41,4 @@ public class ExceptionHandlingMiddleware
         var response = new { message = exception.Message };
         return context.Response.WriteAsync(JsonSerializer.Serialize(response));
     }
-}
+} 

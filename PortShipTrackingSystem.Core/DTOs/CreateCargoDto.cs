@@ -10,7 +10,8 @@ public class CreateCargoDto
     [Required]
     public required string Description { get; set; }
 
-    [Range(0.01, double.MaxValue)]
+    [Range(0.01, double.MaxValue, ErrorMessage = "Weight must be greater than 0.")]
+
     public decimal WeightTon { get; set; }
 
     [Required]

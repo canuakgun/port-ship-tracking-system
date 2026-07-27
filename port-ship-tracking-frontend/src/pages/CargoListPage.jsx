@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getCargoesByShipId, createCargo, updateCargo, deleteCargo } from "../api/cargoApi";
+import LoadingSpinner from "../components/LoadingSpinner";
+import ErrorMessage from "../components/ErrorMessage";
+import { getErrorMessage } from "../utils/apiError";
 
 function CargoListPage() {
   const { shipId } = useParams();
   const [cargoes, setCargoes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({ description: "", weightTon: "", cargoType: "" });
 
@@ -17,6 +21,7 @@ function CargoListPage() {
       })
       .catch((error) => {
         console.error("Error fetching cargoes:", error);
+        setError("Failed to load cargoes. Please try again.");
         setLoading(false);
       });
   };
@@ -31,6 +36,7 @@ function CargoListPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setError(null);
     const dto = {
       ...formData,
       shipId: Number(shipId),
@@ -46,7 +52,7 @@ function CargoListPage() {
       })
       .catch((error) => {
         console.error("Error saving cargo:", error);
-        alert("Failed to save cargo. Weight must be greater than 0.");
+        setError(getErrorMessage(error, "Failed to save cargo."));
       });
   };
 
@@ -66,19 +72,22 @@ function CargoListPage() {
 
   const handleDelete = (id) => {
     if (!window.confirm("Are you sure you want to delete this cargo?")) return;
+    setError(null);
     deleteCargo(id)
       .then(() => fetchCargoes())
       .catch((error) => {
         console.error("Error deleting cargo:", error);
-        alert("Failed to delete cargo.");
+        setError(getErrorMessage(error, "Failed to delete cargo."));
       });
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <LoadingSpinner />;
 
   return (
     <div>
       <h1>Cargoes for Ship #{shipId}</h1>
+
+      <ErrorMessage message={error} onDismiss={() => setError(null)} />
 
       <form onSubmit={handleSubmit} className={editingId ? "editing" : ""}>
         <input name="description" placeholder="Description" value={formData.description} onChange={handleChange} required />

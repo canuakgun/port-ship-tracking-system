@@ -1,10 +1,14 @@
 import { useEffect, useState } from "react";
 import { getShips, createShip, updateShip, deleteShip } from "../api/shipApi";
 import { Link } from "react-router-dom";
+import LoadingSpinner from "../components/LoadingSpinner";
+import ErrorMessage from "../components/ErrorMessage";
+import { getErrorMessage } from "../utils/apiError";
 
 function ShipListPage() {
   const [ships, setShips] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
@@ -22,6 +26,7 @@ function ShipListPage() {
       })
       .catch((error) => {
         console.error("Error fetching ships:", error);
+        setError("Failed to load ships. Please try again.");
         setLoading(false);
       });
   };
@@ -36,6 +41,7 @@ function ShipListPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setError(null);
     const dto = { ...formData, yearBuilt: Number(formData.yearBuilt) };
 
     const request = editingId ? updateShip(editingId, dto) : createShip(dto);
@@ -48,7 +54,7 @@ function ShipListPage() {
       })
       .catch((error) => {
         console.error("Error saving ship:", error);
-        alert("Failed to save ship. Check console for details.");
+        setError(getErrorMessage(error, "Failed to save ship."));
       });
   };
 
@@ -70,19 +76,22 @@ function ShipListPage() {
 
   const handleDelete = (id) => {
     if (!window.confirm("Are you sure you want to delete this ship?")) return;
+    setError(null);
     deleteShip(id)
       .then(() => fetchShips())
       .catch((error) => {
         console.error("Error deleting ship:", error);
-        alert("Failed to delete ship.");
+        setError(getErrorMessage(error, "Failed to delete ship."));
       });
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <LoadingSpinner />;
 
   return (
     <div>
       <h1>Ships</h1>
+
+      <ErrorMessage message={error} onDismiss={() => setError(null)} />
 
       <form onSubmit={handleSubmit} className={editingId ? "editing" : ""}>
         <input name="name" placeholder="Name" value={formData.name} onChange={handleChange} required />
