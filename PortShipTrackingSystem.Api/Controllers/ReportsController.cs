@@ -3,6 +3,8 @@ namespace PortShipTrackingSystem.Api.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using PortShipTrackingSystem.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using PortShipTrackingSystem.Core.DTOs;
+using PortShipTrackingSystem.Core.Entities;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -105,5 +107,61 @@ public class ReportsController : ControllerBase
             estimatedQueryCount = 4,
             data = result
         });
+    }
+        [HttpPost("visit-package")]
+    public async Task<IActionResult> CreateVisitPackage(CreateVisitPackageDto dto)
+    {
+        await using var transaction = await _context.Database.BeginTransactionAsync();
+        try
+        {
+            var visit = new ShipVisit
+            {
+                ShipId = dto.ShipId,
+                PortId = dto.PortId,
+                ArrivalDate = dto.ArrivalDate,
+                DepartureDate = dto.DepartureDate,
+                Purpose = dto.Purpose
+            };
+            _context.ShipVisits.Add(visit);
+            await _context.SaveChangesAsync();
+
+            var cargo = new Cargo
+            {
+                ShipId = dto.ShipId,
+                Description = dto.CargoDescription,
+                WeightTon = dto.CargoWeightTon,
+                CargoType = dto.CargoType
+            };
+            _context.Cargoes.Add(cargo);
+            await _context.SaveChangesAsync();
+
+            var assignment = new ShipCrewAssignment
+            {
+                ShipId = dto.ShipId,
+                CrewId = dto.CrewId,
+                AssignmentDate = dto.AssignmentDate
+            };
+            _context.ShipCrewAssignments.Add(assignment);
+            await _context.SaveChangesAsync();
+
+            await transaction.CommitAsync();
+
+            return Ok(new
+            {
+                message = "Visit package created successfully.",
+                visitId = visit.VisitId,
+                cargoId = cargo.CargoId,
+                assignmentId = assignment.AssignmentId
+            });
+        }
+        catch (Exception ex)
+        {
+            await transaction.RollbackAsync();
+            return StatusCode(500, new
+            {
+                message = "Transaction failed, all changes were rolled back.",
+                error = ex.Message
+            });
+        }
     }
 }
