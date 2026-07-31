@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace PortShipTrackingSystem.Core.Entities
 {
-    public class ShipVisit
+    public class ShipVisit : BaseEntity
     {
         public int VisitId{ get; set;}
         public int ShipId{ get; set;}

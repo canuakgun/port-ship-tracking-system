@@ -1,6 +1,6 @@
 namespace PortShipTrackingSystem.Core.Entities
 {
-    public class CrewMember
+    public class CrewMember : BaseEntity
     {
         public int CrewId{ get; set;}
         public required string FirstName{ get; set;}

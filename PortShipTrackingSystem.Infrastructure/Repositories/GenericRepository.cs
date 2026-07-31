@@ -4,8 +4,9 @@ using PortShipTrackingSystem.Core.Exceptions;
 using PortShipTrackingSystem.Core.Interfaces;
 using PortShipTrackingSystem.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using PortShipTrackingSystem.Core.Entities;
 
-public class GenericRepository<T> : IGenericRepository<T> where T : class
+public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
 {
     private readonly AppDbContext _context;
 
@@ -28,11 +29,17 @@ public async Task AddAsync(T entity)
 }
 public void Update(T entity)
 {
+    entity.UpdatedAt = DateTime.UtcNow;
+    entity.UpdatedBy = "System";
+    entity.CreatedBy = "System";
     _context.Set<T>().Update(entity);
 }
 public void Delete(T entity)
 {
-    _context.Set<T>().Remove(entity);
+    entity.IsDeleted = true;
+    entity.UpdatedAt = DateTime.UtcNow;
+    entity.UpdatedBy = "System";
+    _context.Set<T>().Update(entity);
 }
 public async Task<bool> SaveChangesAsync()
 {

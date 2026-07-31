@@ -1,6 +1,6 @@
 namespace PortShipTrackingSystem.Core.Entities{
 
-    public class Ship
+    public class Ship : BaseEntity
     {
         public int ShipId { get; set;}
         public required string Name{ get; set;}

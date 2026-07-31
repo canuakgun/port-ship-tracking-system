@@ -32,6 +32,13 @@ namespace PortShipTrackingSystem.Infrastructure.Data
 
         modelBuilder.Entity<ShipCrewAssignment>()
             .HasKey(x => x.AssignmentId);
+
+        modelBuilder.Entity<Ship>().HasQueryFilter(s => !s.IsDeleted);
+        modelBuilder.Entity<Port>().HasQueryFilter(p => !p.IsDeleted);
+        modelBuilder.Entity<ShipVisit>().HasQueryFilter(v => !v.IsDeleted);
+        modelBuilder.Entity<Cargo>().HasQueryFilter(c => !c.IsDeleted);
+        modelBuilder.Entity<CrewMember>().HasQueryFilter(cm => !cm.IsDeleted);
+        modelBuilder.Entity<ShipCrewAssignment>().HasQueryFilter(a => !a.IsDeleted);
     }
     }
 }
