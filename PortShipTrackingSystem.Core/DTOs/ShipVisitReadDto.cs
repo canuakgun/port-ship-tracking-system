@@ -10,4 +10,5 @@ public class ShipVisitReadDto
     public DateTime ArrivalDate { get; set; }
     public DateTime DepartureDate { get; set; }
     public required string Purpose { get; set; }
+    public required byte[] rowVersion { get; set; }
 }

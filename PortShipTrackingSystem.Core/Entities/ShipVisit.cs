@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace PortShipTrackingSystem.Core.Entities
 {
     public class ShipVisit
@@ -10,6 +12,7 @@ namespace PortShipTrackingSystem.Core.Entities
         public DateTime ArrivalDate{ get; set;}
         public DateTime DepartureDate{ get; set;}
         public required string Purpose{ get; set;}
-
+        [Timestamp]
+        public byte[] RowVersion { get; set; } = null!;
     }
 }

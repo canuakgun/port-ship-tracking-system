@@ -1,5 +1,6 @@
 namespace PortShipTrackingSystem.Infrastructure.Repositories;
 
+using PortShipTrackingSystem.Core.Exceptions;
 using PortShipTrackingSystem.Core.Interfaces;
 using PortShipTrackingSystem.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -35,6 +36,13 @@ public void Delete(T entity)
 }
 public async Task<bool> SaveChangesAsync()
 {
-    return await _context.SaveChangesAsync() > 0;
+    try
+    {
+        return await _context.SaveChangesAsync() > 0;
+    }
+    catch (DbUpdateConcurrencyException)
+    {
+        throw new ConcurrencyException("The record was modified by another user. Please reload and try again.");
+    }
 }
 }
