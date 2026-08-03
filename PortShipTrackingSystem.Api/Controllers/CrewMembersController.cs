@@ -18,16 +18,20 @@ public class CrewMembersController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<CrewMemberReadDto>>> GetAllCrew()
+    public async Task<IActionResult> GetAllCrew()
     {
-        var crew = await _crewMemberService.GetAllCrewAsync();
+        var isAdmin = User.IsInRole("Admin");
+        var isPortManager = User.IsInRole("PortManager");
+        var crew = await _crewMemberService.GetAllCrewAsync(isAdmin, isPortManager);
         return Ok(crew);
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<CrewMemberReadDto>> GetCrewById(int id)
+    public async Task<IActionResult> GetCrewById(int id)
     {
-        var crewMember = await _crewMemberService.GetCrewByIdAsync(id);
+        var isAdmin = User.IsInRole("Admin");
+        var isPortManager = User.IsInRole("PortManager");
+        var crewMember = await _crewMemberService.GetCrewByIdAsync(id, isAdmin, isPortManager);
         return crewMember is null ? NotFound() : Ok(crewMember);
     }
 

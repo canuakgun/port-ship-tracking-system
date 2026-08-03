@@ -14,68 +14,127 @@ public class CrewMemberService : ICrewMemberService
         _crewMemberRepository = crewMemberRepository;
     }
 
-    public async Task<IEnumerable<CrewMemberReadDto>> GetAllCrewAsync()
+        public async Task<IEnumerable<object>> GetAllCrewAsync(bool isAdmin, bool isPortManager)
     {
         var crewMembers = await _crewMemberRepository.GetAllAsync();
 
-        return crewMembers.Select(cm => new CrewMemberReadDto
+        if (isAdmin)
+        {
+            return crewMembers.Select(cm => new CrewMemberAdminDto
+            {
+                CrewId = cm.CrewId,
+                FirstName = cm.FirstName,
+                LastName = cm.LastName,
+                Role = cm.Role,
+                Email = cm.Email,
+                PhoneNumber = cm.PhoneNumber,
+                CreatedAt = cm.CreatedAt,
+                CreatedBy = cm.CreatedBy,
+                UpdatedAt = cm.UpdatedAt,
+                UpdatedBy = cm.UpdatedBy,
+                IsDeleted = cm.IsDeleted
+            });
+        }
+
+        if (isPortManager)
+        {
+            return crewMembers.Select(cm => new CrewMemberDetailDto
+            {
+                CrewId = cm.CrewId,
+                FirstName = cm.FirstName,
+                LastName = cm.LastName,
+                Role = cm.Role,
+                Email = cm.Email,
+                PhoneNumber = cm.PhoneNumber
+            });
+        }
+
+        return crewMembers.Select(cm => new CrewMemberListDto
         {
             CrewId = cm.CrewId,
             FirstName = cm.FirstName,
             LastName = cm.LastName,
-            Email = cm.Email,
-            PhoneNumber = cm.PhoneNumber,
             Role = cm.Role
         });
     }
 
-    public async Task<CrewMemberReadDto?> GetCrewByIdAsync(int id)
+    public async Task<object?> GetCrewByIdAsync(int id, bool isAdmin, bool isPortManager)
     {
         var crewMember = await _crewMemberRepository.GetByIdAsync(id);
-        if(crewMember == null)
+        if (crewMember == null)
         {
             return null;
         }
-        return new CrewMemberReadDto
-        {   
-            CrewId = crewMember.CrewId,
-            FirstName = crewMember.FirstName,
-            LastName = crewMember.LastName,
-            Email = crewMember.Email,
-            PhoneNumber = crewMember.PhoneNumber,
-            Role = crewMember.Role
-        };
-    }
 
-    public async Task<CrewMemberReadDto> CreateCrewAsync(CreateCrewMemberDto dto, string currentUsername)
-    {
-        if(await _crewMemberRepository.GetByEmailAsync(dto.Email) != null)
+        if (isAdmin)
         {
-            throw new ConflictException("crew member with this email already exists");
+            return new CrewMemberAdminDto
+            {
+                CrewId = crewMember.CrewId,
+                FirstName = crewMember.FirstName,
+                LastName = crewMember.LastName,
+                Role = crewMember.Role,
+                Email = crewMember.Email,
+                PhoneNumber = crewMember.PhoneNumber,
+                CreatedAt = crewMember.CreatedAt,
+                CreatedBy = crewMember.CreatedBy,
+                UpdatedAt = crewMember.UpdatedAt,
+                UpdatedBy = crewMember.UpdatedBy,
+                IsDeleted = crewMember.IsDeleted
+            };
         }
-        var crewMember = new CrewMember
+
+        if (isPortManager)
         {
-            FirstName = dto.FirstName,
-            LastName = dto.LastName,
-            Email = dto.Email,
-            PhoneNumber = dto.PhoneNumber,
-            Role = dto.Role,
-            CreatedBy = currentUsername
-        };
+            return new CrewMemberDetailDto
+            {
+                CrewId = crewMember.CrewId,
+                FirstName = crewMember.FirstName,
+                LastName = crewMember.LastName,
+                Role = crewMember.Role,
+                Email = crewMember.Email,
+                PhoneNumber = crewMember.PhoneNumber
+            };
+        }
 
-        await _crewMemberRepository.AddAsync(crewMember);
-        await _crewMemberRepository.SaveChangesAsync();
-
-        return new CrewMemberReadDto
+        return new CrewMemberListDto
         {
             CrewId = crewMember.CrewId,
             FirstName = crewMember.FirstName,
             LastName = crewMember.LastName,
-            Email = crewMember.Email,
-            PhoneNumber = crewMember.PhoneNumber,
             Role = crewMember.Role
         };
     }
+
+        public async Task<CrewMemberReadDto> CreateCrewAsync(CreateCrewMemberDto dto, string currentUsername)
+        {
+            if(await _crewMemberRepository.GetByEmailAsync(dto.Email) != null)
+            {
+                throw new ConflictException("crew member with this email already exists");
+            }
+            var crewMember = new CrewMember
+            {
+                FirstName = dto.FirstName,
+                LastName = dto.LastName,
+                Email = dto.Email,
+                PhoneNumber = dto.PhoneNumber,
+                Role = dto.Role,
+                CreatedBy = currentUsername
+            };
+
+            await _crewMemberRepository.AddAsync(crewMember);
+            await _crewMemberRepository.SaveChangesAsync();
+
+            return new CrewMemberReadDto
+            {
+                CrewId = crewMember.CrewId,
+                FirstName = crewMember.FirstName,
+                LastName = crewMember.LastName,
+                Email = crewMember.Email,
+                PhoneNumber = crewMember.PhoneNumber,
+                Role = crewMember.Role
+            };
+        }
 
     public async Task<bool> UpdateCrewAsync(int id, UpdateCrewMemberDto dto, string currentUsername, bool isAdmin)
     {
