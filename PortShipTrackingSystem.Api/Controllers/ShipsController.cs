@@ -3,9 +3,11 @@ namespace PortShipTrackingSystem.Api.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using PortShipTrackingSystem.Core.DTOs;
 using PortShipTrackingSystem.Core.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class ShipsController : ControllerBase
 {
     private readonly IShipService _shipService;
@@ -28,6 +30,7 @@ public class ShipsController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin,PortManager")]
     public async Task<ActionResult<ShipReadDto>> CreateShip(CreateShipDto dto)
     {
         var created = await _shipService.CreateShipAsync(dto);
@@ -35,6 +38,7 @@ public class ShipsController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Authorize(Roles = "Admin,PortManager")]
     public async Task<IActionResult> UpdateShip(int id, UpdateShipDto dto)
     {
         var updated = await _shipService.UpdateShipAsync(id, dto);
@@ -42,6 +46,7 @@ public class ShipsController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteShip(int id)
     {
         var deleted = await _shipService.DeleteShipAsync(id);

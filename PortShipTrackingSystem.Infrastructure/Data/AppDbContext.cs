@@ -13,6 +13,7 @@ namespace PortShipTrackingSystem.Infrastructure.Data
         public DbSet<Cargo> Cargoes { get; set; }
         public DbSet<CrewMember> CrewMembers { get; set; }
         public DbSet<ShipCrewAssignment> ShipCrewAssignments { get; set; }
+        public DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -39,6 +40,7 @@ namespace PortShipTrackingSystem.Infrastructure.Data
         modelBuilder.Entity<Cargo>().HasQueryFilter(c => !c.IsDeleted);
         modelBuilder.Entity<CrewMember>().HasQueryFilter(cm => !cm.IsDeleted);
         modelBuilder.Entity<ShipCrewAssignment>().HasQueryFilter(a => !a.IsDeleted);
+        modelBuilder.Entity<User>().HasQueryFilter(u => !u.IsDeleted);
     }
     }
 }

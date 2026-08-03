@@ -3,9 +3,11 @@ namespace PortShipTrackingSystem.Api.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using PortShipTrackingSystem.Core.DTOs;
 using PortShipTrackingSystem.Core.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class ShipCrewAssignmentsController : ControllerBase
 {
     private readonly IShipCrewAssignmentService _shipCrewAssignmentService;
@@ -30,6 +32,7 @@ public class ShipCrewAssignmentsController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin,PortManager")]
     public async Task<ActionResult<ShipCrewAssignmentReadDto>> CreateAssignment(CreateShipCrewAssignmentDto dto)
     {
         var created = await _shipCrewAssignmentService.CreateAssignmentAsync(dto);
@@ -37,6 +40,7 @@ public class ShipCrewAssignmentsController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteAssignment(int id)
     {
         var deleted = await _shipCrewAssignmentService.DeleteAssignmentAsync(id);

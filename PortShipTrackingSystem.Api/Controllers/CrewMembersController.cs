@@ -3,9 +3,11 @@ namespace PortShipTrackingSystem.Api.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using PortShipTrackingSystem.Core.DTOs;
 using PortShipTrackingSystem.Core.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class CrewMembersController : ControllerBase
 {
     private readonly ICrewMemberService _crewMemberService;
@@ -30,6 +32,7 @@ public class CrewMembersController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin,PortManager")]
     public async Task<ActionResult<CrewMemberReadDto>> CreateCrew(CreateCrewMemberDto dto)
     {
         var created = await _crewMemberService.CreateCrewAsync(dto);
@@ -37,6 +40,7 @@ public class CrewMembersController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Authorize(Roles = "Admin,PortManager")]
     public async Task<IActionResult> UpdateCrew(int id, UpdateCrewMemberDto dto)
     {
         var updated = await _crewMemberService.UpdateCrewAsync(id, dto);
@@ -44,6 +48,7 @@ public class CrewMembersController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteCrew(int id)
     {
         var deleted = await _crewMemberService.DeleteCrewAsync(id);
