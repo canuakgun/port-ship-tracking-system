@@ -34,24 +34,29 @@ public class CrewMembersController : ControllerBase
     [HttpPost]
     [Authorize(Roles = "Admin,PortManager")]
     public async Task<ActionResult<CrewMemberReadDto>> CreateCrew(CreateCrewMemberDto dto)
-    {
-        var created = await _crewMemberService.CreateCrewAsync(dto);
+    {   
+        var username = User.Identity!.Name!;
+        var created = await _crewMemberService.CreateCrewAsync(dto, username);
         return CreatedAtAction(nameof(GetCrewById), new { id = created.CrewId }, created);
     }
 
     [HttpPut("{id}")]
     [Authorize(Roles = "Admin,PortManager")]
     public async Task<IActionResult> UpdateCrew(int id, UpdateCrewMemberDto dto)
-    {
-        var updated = await _crewMemberService.UpdateCrewAsync(id, dto);
+    {   
+        var username = User.Identity!.Name!;
+        var isAdmin = User.IsInRole("Admin");
+        var updated = await _crewMemberService.UpdateCrewAsync(id, dto, username, isAdmin);
         return updated ? NoContent() : NotFound();
     }
 
     [HttpDelete("{id}")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteCrew(int id)
-    {
-        var deleted = await _crewMemberService.DeleteCrewAsync(id);
+    {   
+        var username = User.Identity!.Name!;
+        var isAdmin = User.IsInRole("Admin");
+        var deleted = await _crewMemberService.DeleteCrewAsync(id, username, isAdmin);
         return deleted ? NoContent() : NotFound();
     }
 }

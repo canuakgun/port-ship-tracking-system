@@ -35,9 +35,9 @@ public class ShipVisitRepository : GenericRepository<ShipVisit>, IShipVisitRepos
     {
         return await _context.ShipVisits.Include(v => v.Ship).Include(v => v.Port).FirstOrDefaultAsync(v => v.VisitId == id);
     }
-    public async Task<bool> UpdateWithConcurrencyAsync(ShipVisit visit, byte[] originalRowVersion)
+    public async Task<bool> UpdateWithConcurrencyAsync(ShipVisit visit, byte[] originalRowVersion, string currentUsername)
 {
-    Update(visit);
+    Update(visit, currentUsername);
     _context.Entry(visit).Property(v => v.RowVersion).OriginalValue = originalRowVersion;
     return await SaveChangesAsync();
 }

@@ -6,6 +6,6 @@ public interface IShipCrewAssignmentService
 {
     Task<IEnumerable<ShipCrewAssignmentReadDto>> GetAllAssignmentsAsync();
     Task<ShipCrewAssignmentReadDto?> GetAssignmentByIdAsync(int id);
-    Task<ShipCrewAssignmentReadDto> CreateAssignmentAsync(CreateShipCrewAssignmentDto dto);
-    Task<bool> DeleteAssignmentAsync(int id);
+    Task<ShipCrewAssignmentReadDto> CreateAssignmentAsync(CreateShipCrewAssignmentDto dto, string currentUsername);
+    Task<bool> DeleteAssignmentAsync(int id, string currentUsername, bool isAdmin);
 }

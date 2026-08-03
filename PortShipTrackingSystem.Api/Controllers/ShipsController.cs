@@ -30,26 +30,31 @@ public class ShipsController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Roles = "Admin,PortManager")]
-    public async Task<ActionResult<ShipReadDto>> CreateShip(CreateShipDto dto)
-    {
-        var created = await _shipService.CreateShipAsync(dto);
-        return CreatedAtAction(nameof(GetShipById), new { id = created.ShipId }, created);
-    }
+[Authorize(Roles = "Admin,PortManager")]
+public async Task<ActionResult<ShipReadDto>> CreateShip(CreateShipDto dto)
+{
+    var username = User.Identity!.Name!;
+    var created = await _shipService.CreateShipAsync(dto, username);
+    return CreatedAtAction(nameof(GetShipById), new { id = created.ShipId }, created);
+}
 
-    [HttpPut("{id}")]
-    [Authorize(Roles = "Admin,PortManager")]
-    public async Task<IActionResult> UpdateShip(int id, UpdateShipDto dto)
-    {
-        var updated = await _shipService.UpdateShipAsync(id, dto);
-        return updated ? NoContent() : NotFound();
-    }
+[HttpPut("{id}")]
+[Authorize(Roles = "Admin,PortManager")]
+public async Task<IActionResult> UpdateShip(int id, UpdateShipDto dto)
+{
+    var username = User.Identity!.Name!;
+    var isAdmin = User.IsInRole("Admin");
+    var updated = await _shipService.UpdateShipAsync(id, dto, username, isAdmin);
+    return updated ? NoContent() : NotFound();
+}
 
-    [HttpDelete("{id}")]
-    [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> DeleteShip(int id)
-    {
-        var deleted = await _shipService.DeleteShipAsync(id);
-        return deleted ? NoContent() : NotFound();
-    }
+[HttpDelete("{id}")]
+[Authorize(Roles = "Admin")]
+public async Task<IActionResult> DeleteShip(int id)
+{
+    var username = User.Identity!.Name!;
+    var isAdmin = User.IsInRole("Admin");
+    var deleted = await _shipService.DeleteShipAsync(id, username, isAdmin);
+    return deleted ? NoContent() : NotFound();
+}
 }

@@ -3,6 +3,8 @@ namespace PortShipTrackingSystem.Services;
 using PortShipTrackingSystem.Core.DTOs;
 using PortShipTrackingSystem.Core.Entities;
 using PortShipTrackingSystem.Core.Interfaces;
+using PortShipTrackingSystem.Core.Exceptions;
+
 
 public class PortService : IPortService
 {
@@ -42,13 +44,14 @@ public class PortService : IPortService
         };
     }
 
-    public async Task<PortReadDto> CreatePortAsync(CreatePortDto dto)
+    public async Task<PortReadDto> CreatePortAsync(CreatePortDto dto, string currentUsername)
     {
         var port = new Port
         {
             Name = dto.Name,
             Country = dto.Country,
-            City = dto.City
+            City = dto.City,
+            CreatedBy = currentUsername
         };
         await _portRepository.AddAsync(port);
         await _portRepository.SaveChangesAsync();
@@ -62,29 +65,37 @@ public class PortService : IPortService
         };
     }
 
-    public async Task<bool> UpdatePortAsync(int id, UpdatePortDto dto)
+    public async Task<bool> UpdatePortAsync(int id, UpdatePortDto dto, string currentUsername, bool isAdmin)
     { 
         var port = await _portRepository.GetByIdAsync(id);
         if(port == null)
         {
             return false;
         }
+        if (!isAdmin && port.CreatedBy != currentUsername)
+        {
+            throw new ForbiddenException("You do not have permission to modify this record.");
+        }
         port.Name = dto.Name;
         port.Country = dto.Country;
         port.City = dto.City;
 
-        _portRepository.Update(port);
+        _portRepository.Update(port, currentUsername);
         return await _portRepository.SaveChangesAsync();
     }
 
-    public async Task<bool> DeletePortAsync(int id)
+    public async Task<bool> DeletePortAsync(int id, string currentUsername, bool isAdmin)
     {
         var port = await _portRepository.GetByIdAsync(id);
         if(port == null)
         {
             return false;
         }
-        _portRepository.Delete(port);
+        if (!isAdmin && port.CreatedBy != currentUsername)
+        {
+        throw new ForbiddenException("You do not have permission to delete this record.");
+        }
+        _portRepository.Delete(port, currentUsername);
         return await _portRepository.SaveChangesAsync();
     }
 }

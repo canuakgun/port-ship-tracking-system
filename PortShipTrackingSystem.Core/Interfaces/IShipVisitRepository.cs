@@ -8,5 +8,5 @@ public interface IShipVisitRepository : IGenericRepository<ShipVisit>
     Task<IEnumerable<ShipVisit>> GetVisitsByPortIdAsync(int portId);
     Task<IEnumerable<ShipVisit>> GetAllWithDetailsAsync();
     Task<ShipVisit?> GetByIdWithDetailsAsync(int id);
-    Task<bool> UpdateWithConcurrencyAsync(ShipVisit visit, byte[] originalRowVersion);
+    Task<bool> UpdateWithConcurrencyAsync(ShipVisit visit, byte[] originalRowVersion, string currentUsername);
 }

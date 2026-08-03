@@ -32,6 +32,7 @@ public class ExceptionHandlingMiddleware
             NotFoundException => HttpStatusCode.NotFound,
             ValidationException => HttpStatusCode.BadRequest,
             ConflictException => HttpStatusCode.Conflict,
+            ForbiddenException => HttpStatusCode.Forbidden,
             ConcurrencyException => HttpStatusCode.Conflict,
             _ => HttpStatusCode.InternalServerError,
         };

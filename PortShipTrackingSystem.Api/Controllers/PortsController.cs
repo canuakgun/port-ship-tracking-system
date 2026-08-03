@@ -35,23 +35,28 @@ public class PortsController : ControllerBase
     [Authorize(Roles = "Admin,PortManager")]
     public async Task<ActionResult<PortReadDto>> CreatePort(CreatePortDto dto)
     {
-        var created = await _portService.CreatePortAsync(dto);
+        var username = User.Identity!.Name!;
+        var created = await _portService.CreatePortAsync(dto, username);
         return CreatedAtAction(nameof(GetPortById), new { id = created.PortId }, created);
     }
 
     [HttpPut("{id}")]
     [Authorize(Roles = "Admin,PortManager")]
     public async Task<IActionResult> UpdatePort(int id, UpdatePortDto dto)
-    {
-        var updated = await _portService.UpdatePortAsync(id, dto);
+    {   
+        var username = User.Identity!.Name!;
+        var isAdmin = User.IsInRole("Admin");
+        var updated = await _portService.UpdatePortAsync(id, dto, username, isAdmin);
         return updated ? NoContent() : NotFound();
     }
 
     [HttpDelete("{id}")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeletePort(int id)
-    {
-        var deleted = await _portService.DeletePortAsync(id);
+    {   
+        var username = User.Identity!.Name!;
+        var isAdmin = User.IsInRole("Admin");
+        var deleted = await _portService.DeletePortAsync(id, username, isAdmin);
         return deleted ? NoContent() : NotFound();
     }
 }

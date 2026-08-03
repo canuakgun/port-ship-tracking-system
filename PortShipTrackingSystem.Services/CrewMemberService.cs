@@ -47,7 +47,7 @@ public class CrewMemberService : ICrewMemberService
         };
     }
 
-    public async Task<CrewMemberReadDto> CreateCrewAsync(CreateCrewMemberDto dto)
+    public async Task<CrewMemberReadDto> CreateCrewAsync(CreateCrewMemberDto dto, string currentUsername)
     {
         if(await _crewMemberRepository.GetByEmailAsync(dto.Email) != null)
         {
@@ -59,7 +59,8 @@ public class CrewMemberService : ICrewMemberService
             LastName = dto.LastName,
             Email = dto.Email,
             PhoneNumber = dto.PhoneNumber,
-            Role = dto.Role
+            Role = dto.Role,
+            CreatedBy = currentUsername
         };
 
         await _crewMemberRepository.AddAsync(crewMember);
@@ -76,12 +77,16 @@ public class CrewMemberService : ICrewMemberService
         };
     }
 
-    public async Task<bool> UpdateCrewAsync(int id, UpdateCrewMemberDto dto)
+    public async Task<bool> UpdateCrewAsync(int id, UpdateCrewMemberDto dto, string currentUsername, bool isAdmin)
     {
         var crewMember= await _crewMemberRepository.GetByIdAsync(id);
         if(crewMember == null)
         {
             return false;
+        }
+        if (!isAdmin && crewMember.CreatedBy != currentUsername)
+        {
+            throw new ForbiddenException("You do not have permission to delete this record.");
         }
         bool isEmailChanged = !string.Equals(crewMember.Email, dto.Email, StringComparison.OrdinalIgnoreCase);
 
@@ -100,18 +105,22 @@ public class CrewMemberService : ICrewMemberService
             crewMember.PhoneNumber = dto.PhoneNumber;
             crewMember.Role = dto.Role;
 
-            _crewMemberRepository.Update(crewMember);
+            _crewMemberRepository.Update(crewMember,currentUsername);
             return await _crewMemberRepository.SaveChangesAsync();
     }
 
-    public async Task<bool> DeleteCrewAsync(int id)
+    public async Task<bool> DeleteCrewAsync(int id, string currentUsername, bool isAdmin)
     {
         var crewMember = await _crewMemberRepository.GetByIdAsync(id);
         if(crewMember == null)
         {
             return false;
         }
-        _crewMemberRepository.Delete(crewMember);
+        if (!isAdmin && crewMember.CreatedBy != currentUsername)
+        {
+            throw new ForbiddenException("You do not have permission to delete this record.");
+        }
+        _crewMemberRepository.Delete(crewMember,currentUsername);
         return await _crewMemberRepository.SaveChangesAsync();
     }
 }

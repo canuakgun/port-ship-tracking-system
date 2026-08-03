@@ -34,8 +34,9 @@ public class ShipVisitsController : ControllerBase
     [HttpPost]
     [Authorize(Roles = "Admin,PortManager")]
     public async Task<ActionResult<ShipVisitReadDto>> CreateVisit(CreateShipVisitDto dto)
-    {
-        var created = await _shipVisitService.CreateVisitAsync(dto);
+    {   
+        var username = User.Identity!.Name!;
+        var created = await _shipVisitService.CreateVisitAsync(dto, username);
         return CreatedAtAction(nameof(GetVisitById), new { id = created.VisitId }, created);
     }
 
@@ -43,7 +44,9 @@ public class ShipVisitsController : ControllerBase
     [Authorize(Roles = "Admin,PortManager")]
     public async Task<IActionResult> UpdateVisit(int id, UpdateShipVisitDto dto)
     {
-        var updated = await _shipVisitService.UpdateVisitAsync(id, dto);
+        var username = User.Identity!.Name!;
+        var isAdmin = User.IsInRole("Admin");
+        var updated = await _shipVisitService.UpdateVisitAsync(id, dto, username, isAdmin);
         return updated ? NoContent() : NotFound();
     }
 
@@ -51,7 +54,9 @@ public class ShipVisitsController : ControllerBase
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteVisit(int id)
     {
-        var deleted = await _shipVisitService.DeleteVisitAsync(id);
+        var username = User.Identity!.Name!;
+        var isAdmin = User.IsInRole("Admin");
+        var deleted = await _shipVisitService.DeleteVisitAsync(id, username, isAdmin);
         return deleted ? NoContent() : NotFound();
     }
 }
