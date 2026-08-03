@@ -80,7 +80,7 @@ dotnet test
 
 ## Screenshots
 
-(add screenshots here, e.g. the Ships management page)
+(screenshots will go here)
 
 ## Author
 
