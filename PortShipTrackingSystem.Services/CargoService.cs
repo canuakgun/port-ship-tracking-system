@@ -4,6 +4,7 @@ using PortShipTrackingSystem.Core.DTOs;
 using PortShipTrackingSystem.Core.Entities;
 using PortShipTrackingSystem.Core.Interfaces;
 using PortShipTrackingSystem.Core.Exceptions;
+using PortShipTrackingSystem.Core.Validation;
 
 public class CargoService : ICargoService
 {
@@ -47,7 +48,11 @@ public class CargoService : ICargoService
     }
 
     public async Task<CargoReadDto> CreateCargoAsync(CreateCargoDto dto, string currentUsername)
+    {   
+        if (InputGuard.ContainsHtmlTags(dto.Description))
     {
+        throw new ValidationException("Description cannot contain HTML tags.");
+    }
         if(dto.WeightTon <= 0)
         {
             throw new ValidationException("WeightTon must be bigger than 0.");

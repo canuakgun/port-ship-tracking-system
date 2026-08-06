@@ -4,6 +4,7 @@ using PortShipTrackingSystem.Core.DTOs;
 using PortShipTrackingSystem.Core.Entities;
 using PortShipTrackingSystem.Core.Interfaces;
 using PortShipTrackingSystem.Core.Exceptions;
+using PortShipTrackingSystem.Core.Validation;
 
 
 public class ShipVisitService : IShipVisitService
@@ -56,6 +57,10 @@ public class ShipVisitService : IShipVisitService
 
     public async Task<ShipVisitReadDto> CreateVisitAsync(CreateShipVisitDto dto, string currentUsername)
     {
+        if (InputGuard.ContainsHtmlTags(dto.Purpose))
+    {
+        throw new ValidationException("Purpose cannot contain HTML tags.");
+    }
         if (dto.ArrivalDate >= dto.DepartureDate)
         {
             throw new ValidationException("Arrival date must be before departure date.");
