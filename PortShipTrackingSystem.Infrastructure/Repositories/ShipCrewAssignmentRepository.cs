@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using PortShipTrackingSystem.Core.Entities;
 using PortShipTrackingSystem.Core.Interfaces;
 using PortShipTrackingSystem.Infrastructure.Data;
+using PortShipTrackingSystem.Core.DTOs;
 
 public class ShipCrewAssignmentRepository : GenericRepository<ShipCrewAssignment>, IShipCrewAssignmentRepository
 {
@@ -24,10 +25,16 @@ public class ShipCrewAssignmentRepository : GenericRepository<ShipCrewAssignment
     {
         return await _context.ShipCrewAssignments.Where(sca => sca.ShipId == shipId).ToListAsync();
     }
-    public async Task<IEnumerable<ShipCrewAssignment>> GetAllWithDetailsAsync()
-    {
-        return await _context.ShipCrewAssignments.Include(a => a.Ship).Include(a => a.Crew).ToListAsync();
-    }
+    public async Task<IEnumerable<ShipCrewAssignment>> GetAllWithDetailsAsync(PaginationParams pagination)
+{
+    return await _context.ShipCrewAssignments
+        .Include(a => a.Ship)
+        .Include(a => a.Crew)
+        .Skip((pagination.PageNumber - 1) * pagination.PageSize)
+        .Take(pagination.PageSize)
+        .ToListAsync();
+}
+
 
     public async Task<ShipCrewAssignment?> GetByIdWithDetailsAsync(int id)
     {

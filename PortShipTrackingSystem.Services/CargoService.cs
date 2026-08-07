@@ -28,6 +28,21 @@ public class CargoService : ICargoService
             ShipName = c.Ship.Name
         });
     }
+    public async Task<IEnumerable<CargoReadDto>> GetCargoesByShipIdAsync(int shipId, PaginationParams pagination)
+    {
+        var cargoes = await _cargoRepository.GetCargoesByShipIdAsync(shipId, pagination.PageNumber, pagination.PageSize);
+    
+        return cargoes.Select(c => new CargoReadDto
+        {
+            CargoId = c.CargoId,
+            ShipId = c.ShipId,
+            Description = c.Description,
+            WeightTon = c.WeightTon,
+            CargoType = c.CargoType,
+            ShipName = c.Ship.Name
+        });
+    }
+
 
     public async Task<CargoReadDto?> GetCargoByIdAsync(int id)
     {   

@@ -18,9 +18,9 @@ public class ShipCrewAssignmentsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<ShipCrewAssignmentReadDto>>> GetAllAssignments()
+    public async Task<ActionResult<IEnumerable<ShipCrewAssignmentReadDto>>> GetAllAssignments([FromQuery]PaginationParams pagination)
     {
-        var assignments = await _shipCrewAssignmentService.GetAllAssignmentsAsync();
+        var assignments = await _shipCrewAssignmentService.GetAllAssignmentsAsync(pagination);
         return Ok(assignments);
     }
 

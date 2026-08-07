@@ -16,9 +16,9 @@ public class ShipVisitService : IShipVisitService
         _shipVisitRepository = shipVisitRepository;
     }
 
-    public async Task<IEnumerable<ShipVisitReadDto>> GetAllVisitsAsync()
+    public async Task<IEnumerable<ShipVisitReadDto>> GetAllVisitsAsync(PaginationParams pagination)
     {   
-        var visits = await _shipVisitRepository.GetAllWithDetailsAsync();
+        var visits = await _shipVisitRepository.GetAllWithDetailsAsync(pagination);
 
         return visits.Select(v => new ShipVisitReadDto
     {

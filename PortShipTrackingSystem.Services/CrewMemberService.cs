@@ -14,9 +14,9 @@ public class CrewMemberService : ICrewMemberService
         _crewMemberRepository = crewMemberRepository;
     }
 
-        public async Task<IEnumerable<object>> GetAllCrewAsync(bool isAdmin, bool isPortManager)
+        public async Task<IEnumerable<object>> GetAllCrewAsync(bool isAdmin, bool isPortManager, PaginationParams pagination)
     {
-        var crewMembers = await _crewMemberRepository.GetAllAsync();
+        var crewMembers = await _crewMemberRepository.GetAllAsync(pagination.PageNumber, pagination.PageSize);
 
         if (isAdmin)
         {

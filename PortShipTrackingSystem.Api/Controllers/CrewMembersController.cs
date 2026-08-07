@@ -18,11 +18,11 @@ public class CrewMembersController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAllCrew()
+    public async Task<IActionResult> GetAllCrew([FromQuery] PaginationParams pagination)
     {
         var isAdmin = User.IsInRole("Admin");
         var isPortManager = User.IsInRole("PortManager");
-        var crew = await _crewMemberService.GetAllCrewAsync(isAdmin, isPortManager);
+        var crew = await _crewMemberService.GetAllCrewAsync(isAdmin, isPortManager, pagination);
         return Ok(crew);
     }
 

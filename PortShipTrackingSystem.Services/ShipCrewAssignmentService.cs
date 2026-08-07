@@ -14,9 +14,9 @@ public class ShipCrewAssignmentService : IShipCrewAssignmentService
         _shipCrewAssignmentRepository = shipCrewAssignmentRepository;
     }
 
-    public async Task<IEnumerable<ShipCrewAssignmentReadDto>> GetAllAssignmentsAsync()
+    public async Task<IEnumerable<ShipCrewAssignmentReadDto>> GetAllAssignmentsAsync(PaginationParams pagination)
     {
-        var shipCrewAssignments = await _shipCrewAssignmentRepository.GetAllWithDetailsAsync();
+        var shipCrewAssignments = await _shipCrewAssignmentRepository.GetAllWithDetailsAsync(pagination);
         
         return shipCrewAssignments.Select(sca => new ShipCrewAssignmentReadDto
         {

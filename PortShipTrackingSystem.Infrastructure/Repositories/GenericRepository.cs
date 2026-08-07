@@ -23,6 +23,13 @@ public async Task<IEnumerable<T>> GetAllAsync()
 {
     return await _context.Set<T>().ToListAsync();
 }
+public async Task<IEnumerable<T>> GetAllAsync(int pageNumber, int pageSize)
+{
+    return await _context.Set<T>()
+        .Skip((pageNumber - 1) * pageSize)
+        .Take(pageSize)
+        .ToListAsync();
+}
 public async Task AddAsync(T entity)
 {
     await _context.Set<T>().AddAsync(entity);

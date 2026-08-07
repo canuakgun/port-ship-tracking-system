@@ -18,9 +18,9 @@ public class PortsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<PortReadDto>>> GetAllPorts()
+    public async Task<ActionResult<IEnumerable<PortReadDto>>> GetAllPorts([FromQuery] PaginationParams pagination)
     {
-        var ports = await _portService.GetAllPortsAsync();
+        var ports = await _portService.GetAllPortsAsync(pagination);
         return Ok(ports);
     }
 

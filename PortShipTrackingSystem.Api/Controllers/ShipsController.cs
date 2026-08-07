@@ -17,9 +17,9 @@ public class ShipsController : ControllerBase
         _shipService = shipService;
     }
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<ShipReadDto>>> GetAllShips()
+    public async Task<ActionResult<IEnumerable<ShipReadDto>>> GetAllShips([FromQuery] PaginationParams pagination)
     {
-        var ships = await _shipService.GetAllShipsAsync();
+        var ships = await _shipService.GetAllShipsAsync(pagination);
         return Ok(ships);
     }
     [HttpGet("{id}")]

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using PortShipTrackingSystem.Core.Entities;
 using PortShipTrackingSystem.Core.Interfaces;
 using PortShipTrackingSystem.Infrastructure.Data;
+using PortShipTrackingSystem.Core.DTOs;
 
 public class ShipVisitRepository : GenericRepository<ShipVisit>, IShipVisitRepository
 {
@@ -23,13 +24,17 @@ public class ShipVisitRepository : GenericRepository<ShipVisit>, IShipVisitRepos
     {
         return await _context.ShipVisits.Where(v => v.PortId == portId).ToListAsync();
     }
-    public async Task<IEnumerable<ShipVisit>> GetAllWithDetailsAsync()
+  public async Task<IEnumerable<ShipVisit>> GetAllWithDetailsAsync(PaginationParams pagination)
 {
     return await _context.ShipVisits
         .Include(v => v.Ship)
         .Include(v => v.Port)
+        .AsSplitQuery()
+        .Skip((pagination.PageNumber - 1) * pagination.PageSize)
+        .Take(pagination.PageSize)
         .ToListAsync();
 }
+
 
     public async Task<ShipVisit?> GetByIdWithDetailsAsync(int id)
     {

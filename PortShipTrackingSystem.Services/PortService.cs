@@ -15,9 +15,9 @@ public class PortService : IPortService
         _portRepository = portRepository;
     }
 
-    public async Task<IEnumerable<PortReadDto>> GetAllPortsAsync()
+    public async Task<IEnumerable<PortReadDto>> GetAllPortsAsync(PaginationParams pagination)
     {
-        var ports = await _portRepository.GetAllAsync();
+        var ports = await _portRepository.GetAllAsync(pagination.PageNumber, pagination.PageSize);
 
         return ports.Select(p => new PortReadDto
         {

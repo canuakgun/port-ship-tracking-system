@@ -4,6 +4,8 @@ using PortShipTrackingSystem.Core.Entities;
 
 public interface ICargoRepository : IGenericRepository<Cargo>
 {
+    
     Task<IEnumerable<Cargo>> GetCargoesByShipIdAsync(int shipId);
+    Task<IEnumerable<Cargo>> GetCargoesByShipIdAsync(int shipId, int pageNumber, int pageSize);
     Task<Cargo?> GetByIdWithDetailsAsync(int id);
 }

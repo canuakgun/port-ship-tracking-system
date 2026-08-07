@@ -23,6 +23,13 @@ public class CargoesController : ControllerBase
         var cargoes = await _cargoService.GetCargoesByShipIdAsync(shipId);
         return Ok(cargoes);
     }
+        [HttpGet("ship/{shipId}/paginated")]
+    public async Task<ActionResult<IEnumerable<CargoReadDto>>> GetCargoesByShipIdPaginated(int shipId, [FromQuery] PaginationParams pagination)
+    {
+        var cargoes = await _cargoService.GetCargoesByShipIdAsync(shipId, pagination);
+        return Ok(cargoes);
+    }
+
 
     [HttpGet("{id}")]
     public async Task<ActionResult<CargoReadDto>> GetCargoById(int id)

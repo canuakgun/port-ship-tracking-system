@@ -4,7 +4,7 @@ using PortShipTrackingSystem.Core.DTOs;
 
 public interface ICrewMemberService
 {
-    Task<IEnumerable<object>> GetAllCrewAsync(bool isAdmin, bool isPortManager);
+    Task<IEnumerable<object>> GetAllCrewAsync(bool isAdmin, bool isPortManager, PaginationParams pagination);
     Task<object?> GetCrewByIdAsync(int id, bool isAdmin, bool isPortManager);
     Task<CrewMemberReadDto> CreateCrewAsync(CreateCrewMemberDto dto, string currentUsername);
     Task<bool> UpdateCrewAsync(int id, UpdateCrewMemberDto dto, string currentUsername, bool isAdmin);

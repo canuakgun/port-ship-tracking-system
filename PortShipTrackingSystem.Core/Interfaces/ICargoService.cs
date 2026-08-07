@@ -4,7 +4,9 @@ using PortShipTrackingSystem.Core.DTOs;
 
 public interface ICargoService
 {
+    Task<IEnumerable<CargoReadDto>> GetCargoesByShipIdAsync(int shipId, PaginationParams pagination);
     Task<IEnumerable<CargoReadDto>> GetCargoesByShipIdAsync(int shipId);
+
     Task<CargoReadDto?> GetCargoByIdAsync(int id);
     Task<CargoReadDto> CreateCargoAsync(CreateCargoDto dto, string currentUsername);
     Task<bool> UpdateCargoAsync(int id, UpdateCargoDto dto, string currentUsername, bool isAdmin);

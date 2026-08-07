@@ -4,7 +4,7 @@ using PortShipTrackingSystem.Core.DTOs;
 
 public interface IShipService
 {
-    Task<IEnumerable<ShipReadDto>> GetAllShipsAsync();
+    Task<IEnumerable<ShipReadDto>> GetAllShipsAsync(PaginationParams pagination);
     Task<ShipReadDto?> GetShipByIdAsync(int id);
     Task<ShipReadDto> CreateShipAsync(CreateShipDto dto, string currentUsername);
     Task<bool> UpdateShipAsync(int id, UpdateShipDto dto, string currentUsername, bool isAdmin);

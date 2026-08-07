@@ -14,9 +14,9 @@ public class ShipService : IShipService
         _shipRepository = shipRepository;
     }
 
-    public async Task<IEnumerable<ShipReadDto>> GetAllShipsAsync()
+    public async Task<IEnumerable<ShipReadDto>> GetAllShipsAsync(PaginationParams pagination)
     {
-        var ships = await _shipRepository.GetAllAsync();
+        var ships = await _shipRepository.GetAllAsync(pagination.PageNumber, pagination.PageSize);
         
         return ships.Select(s => new ShipReadDto
         {

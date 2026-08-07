@@ -18,9 +18,9 @@ public class ShipVisitsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<ShipVisitReadDto>>> GetAllVisits()
+    public async Task<ActionResult<IEnumerable<ShipVisitReadDto>>> GetAllVisits([FromQuery] PaginationParams pagination)
     {
-        var visits = await _shipVisitService.GetAllVisitsAsync();
+        var visits = await _shipVisitService.GetAllVisitsAsync(pagination);
         return Ok(visits);
     }
 
