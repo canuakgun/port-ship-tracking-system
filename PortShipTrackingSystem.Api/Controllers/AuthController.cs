@@ -56,13 +56,44 @@ public class AuthController : ControllerBase
 
         var token = GenerateJwtToken(user);
 
-        return Ok(new TokenResponseDto
+        var refreshToken = Guid.NewGuid().ToString();
+       user.RefreshToken = refreshToken;
+       user.RefreshTokenExpiry = DateTime.UtcNow.AddDays(7);
+       await _context.SaveChangesAsync();
+
+       return Ok(new TokenResponseDto
         {
             Token = token,
             Username = user.Username,
-            Role = user.Role
+            Role = user.Role,
+            RefreshToken = refreshToken
         });
     }
+
+    [HttpPost("refresh")]
+public async Task<ActionResult<TokenResponseDto>> Refresh(RefreshRequestDto dto)
+{
+    var user = await _context.Users.FirstOrDefaultAsync(u => u.RefreshToken == dto.RefreshToken);
+
+    if (user == null || user.RefreshTokenExpiry < DateTime.UtcNow)
+    {
+        return Unauthorized(new { message = "Invalid or expired refresh token." });
+    }
+
+    var newToken = GenerateJwtToken(user);
+    var newRefreshToken = Guid.NewGuid().ToString();
+    user.RefreshToken = newRefreshToken;
+    user.RefreshTokenExpiry = DateTime.UtcNow.AddDays(7);
+    await _context.SaveChangesAsync();
+
+    return Ok(new TokenResponseDto
+    {
+        Token = newToken,
+        Username = user.Username,
+        Role = user.Role,
+        RefreshToken = newRefreshToken
+    });
+}
 
     private string GenerateJwtToken(User user)
     {
@@ -86,4 +117,5 @@ public class AuthController : ControllerBase
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
+
 }
