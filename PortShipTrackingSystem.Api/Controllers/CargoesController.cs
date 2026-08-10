@@ -23,6 +23,13 @@ public class CargoesController : ControllerBase
         var cargoes = await _cargoService.GetCargoesByShipIdAsync(shipId);
         return Ok(cargoes);
     }
+        [HttpGet("ship/{shipId}/paginated")]
+    public async Task<ActionResult<IEnumerable<CargoReadDto>>> GetCargoesByShipIdPaginated(int shipId, [FromQuery] PaginationParams pagination)
+    {
+        var cargoes = await _cargoService.GetCargoesByShipIdAsync(shipId, pagination);
+        return Ok(cargoes);
+    }
+
 
     [HttpGet("{id}")]
     public async Task<ActionResult<CargoReadDto>> GetCargoById(int id)
@@ -35,15 +42,18 @@ public class CargoesController : ControllerBase
     [Authorize(Roles = "Admin,PortManager")]
     public async Task<ActionResult<CargoReadDto>> CreateCargo(CreateCargoDto dto)
     {
-        var created = await _cargoService.CreateCargoAsync(dto);
+        var username = User.Identity!.Name!;
+        var created = await _cargoService.CreateCargoAsync(dto, username);
         return CreatedAtAction(nameof(GetCargoById), new { id = created.CargoId }, created);
     }
 
     [HttpPut("{id}")]
     [Authorize(Roles = "Admin,PortManager")]
     public async Task<IActionResult> UpdateCargo(int id, UpdateCargoDto dto)
-    {
-        var updated = await _cargoService.UpdateCargoAsync(id, dto);
+    {   
+        var username = User.Identity!.Name!;
+        var isAdmin = User.IsInRole("Admin");
+        var updated = await _cargoService.UpdateCargoAsync(id, dto, username, isAdmin);
         return updated ? NoContent() : NotFound();
     }
 
@@ -51,7 +61,9 @@ public class CargoesController : ControllerBase
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteCargo(int id)
     {
-        var deleted = await _cargoService.DeleteCargoAsync(id);
+        var username = User.Identity!.Name!;
+        var isAdmin = User.IsInRole("Admin");
+        var deleted = await _cargoService.DeleteCargoAsync(id, username, isAdmin);
         return deleted ? NoContent() : NotFound();
     }
 }

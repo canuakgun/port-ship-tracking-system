@@ -4,6 +4,7 @@ using PortShipTrackingSystem.Core.DTOs;
 using PortShipTrackingSystem.Core.Entities;
 using PortShipTrackingSystem.Core.Interfaces;
 using PortShipTrackingSystem.Core.Exceptions;
+using PortShipTrackingSystem.Core.Validation;
 
 public class CargoService : ICargoService
 {
@@ -27,6 +28,21 @@ public class CargoService : ICargoService
             ShipName = c.Ship.Name
         });
     }
+    public async Task<IEnumerable<CargoReadDto>> GetCargoesByShipIdAsync(int shipId, PaginationParams pagination)
+    {
+        var cargoes = await _cargoRepository.GetCargoesByShipIdAsync(shipId, pagination.PageNumber, pagination.PageSize);
+    
+        return cargoes.Select(c => new CargoReadDto
+        {
+            CargoId = c.CargoId,
+            ShipId = c.ShipId,
+            Description = c.Description,
+            WeightTon = c.WeightTon,
+            CargoType = c.CargoType,
+            ShipName = c.Ship.Name
+        });
+    }
+
 
     public async Task<CargoReadDto?> GetCargoByIdAsync(int id)
     {   
@@ -46,8 +62,12 @@ public class CargoService : ICargoService
         };
     }
 
-    public async Task<CargoReadDto> CreateCargoAsync(CreateCargoDto dto)
+    public async Task<CargoReadDto> CreateCargoAsync(CreateCargoDto dto, string currentUsername)
+    {   
+        if (InputGuard.ContainsHtmlTags(dto.Description))
     {
+        throw new ValidationException("Description cannot contain HTML tags.");
+    }
         if(dto.WeightTon <= 0)
         {
             throw new ValidationException("WeightTon must be bigger than 0.");
@@ -58,6 +78,7 @@ public class CargoService : ICargoService
             Description = dto.Description,
             WeightTon = dto.WeightTon,
             CargoType = dto.CargoType,
+            CreatedBy = currentUsername
         };
 
         await _cargoRepository.AddAsync(cargo);
@@ -75,7 +96,7 @@ public class CargoService : ICargoService
         };
     }
 
-    public async Task<bool> UpdateCargoAsync(int id, UpdateCargoDto dto)
+    public async Task<bool> UpdateCargoAsync(int id, UpdateCargoDto dto, string currentUsername, bool isAdmin)
     {
         if(dto.WeightTon <= 0)
         {
@@ -86,24 +107,32 @@ public class CargoService : ICargoService
         {
             return false;
         }
+        if (!isAdmin && cargo.CreatedBy != currentUsername)
+        {
+        throw new ForbiddenException("You do not have permission to modify this record.");
+        }
 
         cargo.ShipId = dto.ShipId;
         cargo.Description = dto.Description;
         cargo.WeightTon = dto.WeightTon;
         cargo.CargoType = dto.CargoType;
 
-        _cargoRepository.Update(cargo);
+        _cargoRepository.Update(cargo, currentUsername);
         return await _cargoRepository.SaveChangesAsync();
     }
 
-    public async Task<bool> DeleteCargoAsync(int id)
+    public async Task<bool> DeleteCargoAsync(int id, string currentUsername, bool isAdmin)
     {
         var cargo = await _cargoRepository.GetByIdAsync(id);
         if(cargo == null)
         {
             return false;
         }
-        _cargoRepository.Delete(cargo);
+        if (!isAdmin && cargo.CreatedBy != currentUsername)
+        {
+        throw new ForbiddenException("You do not have permission to delete this record.");
+        }
+        _cargoRepository.Delete(cargo,currentUsername);
         return await _cargoRepository.SaveChangesAsync();
     }
 }

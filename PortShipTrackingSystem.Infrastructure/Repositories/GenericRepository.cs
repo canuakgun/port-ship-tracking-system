@@ -23,22 +23,28 @@ public async Task<IEnumerable<T>> GetAllAsync()
 {
     return await _context.Set<T>().ToListAsync();
 }
+public async Task<IEnumerable<T>> GetAllAsync(int pageNumber, int pageSize)
+{
+    return await _context.Set<T>()
+        .Skip((pageNumber - 1) * pageSize)
+        .Take(pageSize)
+        .ToListAsync();
+}
 public async Task AddAsync(T entity)
 {
     await _context.Set<T>().AddAsync(entity);
 }
-public void Update(T entity)
+public void Update(T entity, string currentUsername)
 {
     entity.UpdatedAt = DateTime.UtcNow;
-    entity.UpdatedBy = "System";
-    entity.CreatedBy = "System";
+    entity.UpdatedBy = currentUsername;
     _context.Set<T>().Update(entity);
 }
-public void Delete(T entity)
+public void Delete(T entity, string currentUsername)
 {
     entity.IsDeleted = true;
     entity.UpdatedAt = DateTime.UtcNow;
-    entity.UpdatedBy = "System";
+    entity.UpdatedBy = currentUsername;
     _context.Set<T>().Update(entity);
 }
 public async Task<bool> SaveChangesAsync()

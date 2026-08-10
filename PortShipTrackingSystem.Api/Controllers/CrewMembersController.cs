@@ -18,40 +18,49 @@ public class CrewMembersController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<CrewMemberReadDto>>> GetAllCrew()
+    public async Task<IActionResult> GetAllCrew([FromQuery] PaginationParams pagination)
     {
-        var crew = await _crewMemberService.GetAllCrewAsync();
+        var isAdmin = User.IsInRole("Admin");
+        var isPortManager = User.IsInRole("PortManager");
+        var crew = await _crewMemberService.GetAllCrewAsync(isAdmin, isPortManager, pagination);
         return Ok(crew);
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<CrewMemberReadDto>> GetCrewById(int id)
+    public async Task<IActionResult> GetCrewById(int id)
     {
-        var crewMember = await _crewMemberService.GetCrewByIdAsync(id);
+        var isAdmin = User.IsInRole("Admin");
+        var isPortManager = User.IsInRole("PortManager");
+        var crewMember = await _crewMemberService.GetCrewByIdAsync(id, isAdmin, isPortManager);
         return crewMember is null ? NotFound() : Ok(crewMember);
     }
 
     [HttpPost]
     [Authorize(Roles = "Admin,PortManager")]
     public async Task<ActionResult<CrewMemberReadDto>> CreateCrew(CreateCrewMemberDto dto)
-    {
-        var created = await _crewMemberService.CreateCrewAsync(dto);
+    {   
+        var username = User.Identity!.Name!;
+        var created = await _crewMemberService.CreateCrewAsync(dto, username);
         return CreatedAtAction(nameof(GetCrewById), new { id = created.CrewId }, created);
     }
 
     [HttpPut("{id}")]
     [Authorize(Roles = "Admin,PortManager")]
     public async Task<IActionResult> UpdateCrew(int id, UpdateCrewMemberDto dto)
-    {
-        var updated = await _crewMemberService.UpdateCrewAsync(id, dto);
+    {   
+        var username = User.Identity!.Name!;
+        var isAdmin = User.IsInRole("Admin");
+        var updated = await _crewMemberService.UpdateCrewAsync(id, dto, username, isAdmin);
         return updated ? NoContent() : NotFound();
     }
 
     [HttpDelete("{id}")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteCrew(int id)
-    {
-        var deleted = await _crewMemberService.DeleteCrewAsync(id);
+    {   
+        var username = User.Identity!.Name!;
+        var isAdmin = User.IsInRole("Admin");
+        var deleted = await _crewMemberService.DeleteCrewAsync(id, username, isAdmin);
         return deleted ? NoContent() : NotFound();
     }
 }

@@ -14,9 +14,9 @@ public class ShipCrewAssignmentService : IShipCrewAssignmentService
         _shipCrewAssignmentRepository = shipCrewAssignmentRepository;
     }
 
-    public async Task<IEnumerable<ShipCrewAssignmentReadDto>> GetAllAssignmentsAsync()
+    public async Task<IEnumerable<ShipCrewAssignmentReadDto>> GetAllAssignmentsAsync(PaginationParams pagination)
     {
-        var shipCrewAssignments = await _shipCrewAssignmentRepository.GetAllWithDetailsAsync();
+        var shipCrewAssignments = await _shipCrewAssignmentRepository.GetAllWithDetailsAsync(pagination);
         
         return shipCrewAssignments.Select(sca => new ShipCrewAssignmentReadDto
         {
@@ -47,7 +47,7 @@ public class ShipCrewAssignmentService : IShipCrewAssignmentService
         };
     }
 
-    public async Task<ShipCrewAssignmentReadDto> CreateAssignmentAsync(CreateShipCrewAssignmentDto dto)
+    public async Task<ShipCrewAssignmentReadDto> CreateAssignmentAsync(CreateShipCrewAssignmentDto dto, string currentUsername)
     {
         if(await _shipCrewAssignmentRepository.AssignmentExistsAsync(dto.ShipId, dto.CrewId, dto.AssignmentDate))
         {
@@ -57,7 +57,8 @@ public class ShipCrewAssignmentService : IShipCrewAssignmentService
         {
           ShipId = dto.ShipId,
           CrewId = dto.CrewId,
-          AssignmentDate = dto.AssignmentDate  
+          AssignmentDate = dto.AssignmentDate,
+          CreatedBy = currentUsername
         };
 
         await _shipCrewAssignmentRepository.AddAsync(shipCrewAssign);
@@ -76,14 +77,18 @@ public class ShipCrewAssignmentService : IShipCrewAssignmentService
         };
     }
 
-    public async Task<bool> DeleteAssignmentAsync(int id)
+    public async Task<bool> DeleteAssignmentAsync(int id, string currentUsername, bool isAdmin)
     {
         var shipCrewAssignment = await _shipCrewAssignmentRepository.GetByIdAsync(id);
         if(shipCrewAssignment == null)
         {
             return false;
         }
-        _shipCrewAssignmentRepository.Delete(shipCrewAssignment);
+        if (!isAdmin && shipCrewAssignment.CreatedBy != currentUsername)
+        {
+            throw new ForbiddenException("You do not have permission to delete this record.");
+        }
+        _shipCrewAssignmentRepository.Delete(shipCrewAssignment, currentUsername);
         return await _shipCrewAssignmentRepository.SaveChangesAsync();
     }
 }

@@ -4,6 +4,7 @@ using PortShipTrackingSystem.Core.DTOs;
 using PortShipTrackingSystem.Core.Entities;
 using PortShipTrackingSystem.Core.Interfaces;
 using PortShipTrackingSystem.Core.Exceptions;
+using PortShipTrackingSystem.Core.Validation;
 
 
 public class ShipVisitService : IShipVisitService
@@ -15,9 +16,9 @@ public class ShipVisitService : IShipVisitService
         _shipVisitRepository = shipVisitRepository;
     }
 
-    public async Task<IEnumerable<ShipVisitReadDto>> GetAllVisitsAsync()
+    public async Task<IEnumerable<ShipVisitReadDto>> GetAllVisitsAsync(PaginationParams pagination)
     {   
-        var visits = await _shipVisitRepository.GetAllWithDetailsAsync();
+        var visits = await _shipVisitRepository.GetAllWithDetailsAsync(pagination);
 
         return visits.Select(v => new ShipVisitReadDto
     {
@@ -54,8 +55,12 @@ public class ShipVisitService : IShipVisitService
         };
     }
 
-    public async Task<ShipVisitReadDto> CreateVisitAsync(CreateShipVisitDto dto)
+    public async Task<ShipVisitReadDto> CreateVisitAsync(CreateShipVisitDto dto, string currentUsername)
     {
+        if (InputGuard.ContainsHtmlTags(dto.Purpose))
+    {
+        throw new ValidationException("Purpose cannot contain HTML tags.");
+    }
         if (dto.ArrivalDate >= dto.DepartureDate)
         {
             throw new ValidationException("Arrival date must be before departure date.");
@@ -66,7 +71,8 @@ public class ShipVisitService : IShipVisitService
             PortId = dto.PortId,
             ArrivalDate = dto.ArrivalDate,
             DepartureDate = dto.DepartureDate,
-            Purpose = dto.Purpose
+            Purpose = dto.Purpose,
+            CreatedBy = currentUsername
         };
 
         await _shipVisitRepository.AddAsync(visit);
@@ -87,7 +93,7 @@ public class ShipVisitService : IShipVisitService
         };
     }
 
-public async Task<bool> UpdateVisitAsync(int id, UpdateShipVisitDto dto)
+public async Task<bool> UpdateVisitAsync(int id, UpdateShipVisitDto dto, string currentUsername, bool isAdmin)
 {
     if (dto.ArrivalDate >= dto.DepartureDate)
     {
@@ -98,24 +104,31 @@ public async Task<bool> UpdateVisitAsync(int id, UpdateShipVisitDto dto)
     {
         return false;
     }
+    if (!isAdmin && visit.CreatedBy != currentUsername)
+    {
+        throw new ForbiddenException("You do not have permission to delete this record.");
+    }
     visit.ShipId = dto.ShipId;
     visit.PortId = dto.PortId;
     visit.ArrivalDate = dto.ArrivalDate;
     visit.DepartureDate = dto.DepartureDate;
     visit.Purpose = dto.Purpose;
 
-    return await _shipVisitRepository.UpdateWithConcurrencyAsync(visit, dto.RowVersion);
+    return await _shipVisitRepository.UpdateWithConcurrencyAsync(visit, dto.RowVersion, currentUsername); 
 }
 
-    public async Task<bool> DeleteVisitAsync(int id)
+    public async Task<bool> DeleteVisitAsync(int id, string currentUsername, bool isAdmin)
     {   
         var visit = await _shipVisitRepository.GetByIdAsync(id);
         if(visit == null)
         {
             return false;
         }
-        _shipVisitRepository.Delete(visit);
-
+        if (!isAdmin && visit.CreatedBy != currentUsername)
+    {
+        throw new ForbiddenException("You do not have permission to delete this record.");
+    }
+        _shipVisitRepository.Delete(visit, currentUsername);
         return await _shipVisitRepository.SaveChangesAsync();
     }
 }

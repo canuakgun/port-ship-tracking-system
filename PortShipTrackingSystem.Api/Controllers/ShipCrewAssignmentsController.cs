@@ -18,9 +18,9 @@ public class ShipCrewAssignmentsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<ShipCrewAssignmentReadDto>>> GetAllAssignments()
+    public async Task<ActionResult<IEnumerable<ShipCrewAssignmentReadDto>>> GetAllAssignments([FromQuery]PaginationParams pagination)
     {
-        var assignments = await _shipCrewAssignmentService.GetAllAssignmentsAsync();
+        var assignments = await _shipCrewAssignmentService.GetAllAssignmentsAsync(pagination);
         return Ok(assignments);
     }
 
@@ -34,16 +34,19 @@ public class ShipCrewAssignmentsController : ControllerBase
     [HttpPost]
     [Authorize(Roles = "Admin,PortManager")]
     public async Task<ActionResult<ShipCrewAssignmentReadDto>> CreateAssignment(CreateShipCrewAssignmentDto dto)
-    {
-        var created = await _shipCrewAssignmentService.CreateAssignmentAsync(dto);
+    {   
+        var username = User.Identity!.Name!;
+        var created = await _shipCrewAssignmentService.CreateAssignmentAsync(dto, username);
         return CreatedAtAction(nameof(GetAssignmentById), new { id = created.AssignmentId }, created);
     }
 
     [HttpDelete("{id}")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteAssignment(int id)
-    {
-        var deleted = await _shipCrewAssignmentService.DeleteAssignmentAsync(id);
+    {   
+        var username = User.Identity!.Name!;
+        var isAdmin = User.IsInRole("Admin");
+        var deleted = await _shipCrewAssignmentService.DeleteAssignmentAsync(id, username, isAdmin);
         return deleted ? NoContent() : NotFound();
     }
 }
